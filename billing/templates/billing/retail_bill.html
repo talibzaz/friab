@@ -1,0 +1,93 @@
+{% extends 'app/base_site.html' %}
+
+{% block content %}
+
+    <section class="content-header">
+      <h1>
+        Retail Billing
+        <small>create bill for customer</small>
+      </h1>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Data Table With Full Features</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="dataTables_length">
+                            <label>Total Items
+                                <select name="total_items" id="total_items" onchange="createItemsTable()" aria-controls="example1" class="form-control input-sm">
+                                {% for r in range %}
+                                    <option value="{{ r }}">{{ r }}</option>
+                                {% endfor %}
+                            </select></label>
+                        </div>
+                    </div>
+                </div>
+              <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th style='width:5px;'>#</th>
+                  <th style='width:250px;'>Item</th>
+                  <th style='width:20px;'>Quantity</th>
+                  <th style='width:20px;'>MRP</th>
+                  <th style='width:20px;'>Discount</th>
+                  <th class='text-center' style='width:20px;'>Total</th>
+                </tr>
+                </thead>
+                <tbody id="tbody">
+
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Rendering engine</th>
+                  <th>Browser</th>
+                  <th>Platform(s)</th>
+                  <th>Engine version</th>
+                  <th>CSS grade</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+
+    <script>
+        function createItemsTable() {
+            $('#tbody').empty();
+            let items_count = $('#total_items').val();
+            for(let i=1; i<=items_count; i++){
+                $('#tbody').append("<tr id='tr_item_"+i+"'>"+
+                    "<td>"+i+"</td>"+
+                    "<td><input class='form-control' type='text' id='item_name_"+i+"'></td>"+
+                    "<td><input class='form-control' type='number' id='item_quantity_"+i+"'></td>"+
+                    "<td><input class='form-control' type='number' id='item_mrp_"+i+"'></td>"+
+                    "<td><input class='form-control' type='number' id='item_discount_"+i+"' value onchange='calculate_total(this.id)'></td>"+
+                    "<td class='text-center' style='padding-top:15px'><b><span id='item_total_"+i+"'></span></b></td>"+
+                    "</tr>"
+                );
+            }
+        }
+        function calculate_total(e){
+            let res = e.split('_');
+
+            let quantity = $('#item_quantity_'+res[2]).val();
+            let mrp = $('#item_mrp_'+res[2]).val();
+            let discount = $('#item_discount_'+res[2]).val();
+            let total = (quantity * mrp) - discount;
+            $('#item_total_'+res[2]).empty().append(total)
+        }
+    </script>
+{% endblock %}
