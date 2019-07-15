@@ -9,6 +9,7 @@ class RetailBillView(TemplateResponseMixin, View):
     def get(self, request):
         template_values = {
             'STATIC_URL': settings.STATIC_URL,
-            'range': range(1, 100),
+            'range': [1, 5, 10, 15, 20, 25, 30],
+            # 'range': ['+1', '+5', '+10', '+15', '+20', '+25', '+30'],
         }
         return self.render_to_response(template_values)
