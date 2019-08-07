@@ -1,0 +1,148 @@
+{% extends 'app/base_site.html' %}
+
+{% block content %}
+
+    <section class="content-header">
+      <h1>
+        Metro Motors Inc.
+        <small>create bill for customer</small>
+      </h1>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Select the type of customer</h1>
+                <div class="col-sm-3">
+                  <select class="form-control" onchange="customerChange()" id="customer_type">
+                      <option>Please select a value</option>
+                      <option value="existing">Existing</option>
+                      <option value="retail">Retail</option>
+                  </select>
+                </div>
+            </div>
+          <div class="col-xs-12 box-header" id="customer_details">
+              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Select a Customer</h1>
+              <div class="col-sm-6">
+                <select class="form-control">
+                    <option>Please select a value</option>
+                    <option value="existing">Existing</option>
+                    <option value="retail">Retail</option>
+                </select>
+              </div>
+          </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="dataTables_length">
+                            <label>Total Items
+                                <select name="total_items" id="total_items" onchange="createItemsTable()" aria-controls="example1" class="form-control input-sm">
+                                <option value="0">0</option>
+                                {% for r in range %}
+                                    <option value="{{ r }}">{{ r }}</option>
+                                {% endfor %}
+                            </select></label>
+                        </div>
+                    </div>
+                </div>
+              <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th style='width:5px;'>#</th>
+                  <th style='width:250px;'>Item</th>
+                  <th style='width:20px;'>Quantity</th>
+                  <th style='width:20px;'>MRP</th>
+                  <th style='width:20px;'>Discount</th>
+                  <th class='text-center' style='width:40px;'>Total</th>
+                  <th class='text-center' style='width:20px;'>#</th>
+                </tr>
+                </thead>
+                <tbody id="tbody">
+
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-6 pull-right">
+          <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">Grand Total</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Sub Total</th>
+                  <th style="width: 100px;" class="text-center"><span id="sub_total"></span></th>
+                </tr>
+                <tr>
+                  <th>Last Balance</th>
+                  <th class="col-xs-3"><input type="number" value=0 class="form-control" id="last_balance" onchange="calculateGrandTotal()"></th>
+                </tr>
+                <tr>
+                  <th>Packaging & Forwarding</th>
+                  <th><input type="number" value=0 class="form-control" id="shipping_cost" onchange="calculateGrandTotal()"></th>
+                </tr>
+                <tr>
+                  <th>Total Amount</th>
+                  <th class="text-center"><span id="total_amount"></span></th>
+                </tr>
+                <tr>
+                  <th>Amount Paid</th>
+                  <th><input type="number" class="form-control" id="amount_paid" value="0" onchange="calculateGrandTotal()"></th>
+                </tr>
+                <tr>
+                  <th>Remaining Balance</th>
+                  <th class="text-center"><span id="remaining_balance"></span></th>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+    </div>
+      <!-- /.row -->
+    <div class="col text-center">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default" style="width: 100px;">Save & Print</button>
+    </div>
+
+    <!-- Modal starts from here!!!!!!!!!!!!!!!!!! -->
+    <div class="modal fade" id="modal-default">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Confirmation Required!</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to save the details in records and print the bill for customer?</p>
+            <p class="col-sm-3">Print GST Bill</p>
+            <input name="print-gst-bill" class="col-sm-1" type="checkbox">
+            <p class="col-sm-4">Mode of Payment</p>
+            <select name="payment-mode" class="col-sm-3">
+                <option value="cash">Cash</option>
+                <option value="mpay">MPay</option>
+                <option value="cheque">Cheque</option>
+                <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="saveInvoice()" data-dismiss="modal">Yes! Save changes</button>
+            <a href="print-invoice.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <script src="{{ STATIC_URL }}js/invoice.js"></script>
+
+{% endblock %}
