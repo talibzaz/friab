@@ -39,7 +39,7 @@
                     <div class="col-sm-6">
                         <div class="dataTables_length">
                             <label>Total Items
-                                <select name="total_items" id="total_items" onchange="createItemsTable()" aria-controls="example1" class="form-control input-sm">
+                                <select name="total_items" id="total_items" onchange="addMultipleRows()" aria-controls="example1" class="form-control input-sm">
                                 <option value="0">0</option>
                                 {% for r in range %}
                                     <option value="{{ r }}">{{ r }}</option>
@@ -51,8 +51,8 @@
               <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th style='width:5px;'>#</th>
-                  <th style='width:250px;'>Item</th>
+                  <th class="text-center" style='width:5px;'>#</th>
+                  <th style='width:250px;'>Product</th>
                   <th style='width:20px;'>Quantity</th>
                   <th style='width:20px;'>MRP</th>
                   <th style='width:20px;'>Discount</th>
@@ -64,6 +64,9 @@
 
                 </tbody>
               </table>
+            <div class="text-center" style="margin-top: 5px;">
+                <button class="btn btn-success" onclick="addOneRow()">+</button>
+            </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -73,7 +76,7 @@
         <div class="col-md-6 pull-right">
           <div class="box">
             <div class="box-header with-border">
-              <h3 class="box-title">Grand Total</h3>
+                <h3 class="box-title"><b>Grand Total</b></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -88,7 +91,11 @@
                 </tr>
                 <tr>
                   <th>Packaging & Forwarding</th>
-                  <th><input type="number" value=0 class="form-control" id="shipping_cost" onchange="calculateGrandTotal()"></th>
+                  <th><input type="number" value=0 class="form-control" id="p_and_f" onchange="calculateGrandTotal()"></th>
+                </tr>
+                <tr>
+                  <th>Round Off</th>
+                  <th><input type="number" value=0 class="form-control" id="round_off" onchange="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Total Amount</th>
@@ -126,7 +133,7 @@
             <p class="col-sm-3">Print GST Bill</p>
             <input name="print-gst-bill" class="col-sm-1" type="checkbox">
             <p class="col-sm-4">Mode of Payment</p>
-            <select name="payment-mode" class="col-sm-3">
+            <select id="payment_mode" class="col-sm-3">
                 <option value="cash">Cash</option>
                 <option value="mpay">MPay</option>
                 <option value="cheque">Cheque</option>
