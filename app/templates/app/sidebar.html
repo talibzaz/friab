@@ -38,7 +38,7 @@
     </li>
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dashboard"></i> <span>Billing</span>
+        <i class="fa fa-industry"></i> <span>Billing</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -49,7 +49,7 @@
     </li>
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dashboard"></i> <span>Sales</span>
+        <i class="fa fa-dollar"></i> <span>Sales</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -57,12 +57,13 @@
       <ul class="treeview-menu">
         <li><a href="{% url 'sales:add-cus-details' %}"><i class="fa fa-circle-o"></i>Add New Customer</a></li>
         <li><a href="#"><i class="fa fa-circle-o"></i>Customer Details</a></li>
+        <li><a href="{% url 'sales:order-info' %}"><i class="fa fa-circle-o"></i>Order Info</a></li>
         <li><a href="#"><i class="fa fa-circle-o"></i>Daily Sales</a></li>
       </ul>
     </li>
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dashboard"></i> <span>Stocks</span>
+        <i class="fa fa-gear"></i> <span>Stocks</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -74,7 +75,7 @@
     </li>
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dashboard"></i> <span>Purchases</span>
+        <i class="fa fa-money"></i> <span>Purchases</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -83,6 +84,18 @@
         <li><a href="#"><i class="fa fa-circle-o"></i>Add Seller</a></li>
         <li><a href="#"><i class="fa fa-circle-o"></i>Purchase History</a></li>
         <li><a href="#"><i class="fa fa-circle-o"></i>Payment History</a></li>
+      </ul>
+    </li>
+      <li class="treeview">
+      <a href="#">
+        <i class="fa fa-user-circle-o"></i> <span>Employees</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="#"><i class="fa fa-user-circle-o"></i>Add Employee</a></li>
+        <li><a href="#"><i class="fa fa-circle-o"></i>Employee Stats</a></li>
       </ul>
     </li>
     <li>

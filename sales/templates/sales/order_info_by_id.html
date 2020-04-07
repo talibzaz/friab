@@ -1,0 +1,84 @@
+{% extends 'app/base_site.html' %}
+
+{% block content %}
+    <section>
+        <div class="pad no-print {{ warning_class }}">
+          <div class="callout callout-danger" style="margin-bottom: 0!important;">
+            <h4><i class="fa fa-info"></i> Oops!</h4>
+            This Order ID does not exist. Please check the Order ID again!
+          </div>
+        </div>
+        <div class="row {{ info_class }}">
+            <div class="col-md-12">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h5>Order ID #A12C5</h5>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-responsive">
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Rate</th>
+                                <th>Discount</th>
+                                <th>Total</th>
+                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>4</td>
+                                    <td>5</td>
+                                    <td>6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pull-right">
+                <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><b>Grand Total</b></h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                  <table class="table table-bordered">
+                    <tr>
+                      <th>Sub Total</th>
+                      <th style="width: 100px;" class="text-center"></th>
+                    </tr>
+                    <tr>
+                      <th>Last Balance</th>
+                      <th class="col-xs-3"></th>
+                    </tr>
+                    <tr>
+                      <th>Packaging & Forwarding</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th>Round Off</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th>Total Amount</th>
+                      <th class="text-center"></th>
+                    </tr>
+                    <tr>
+                      <th>Amount Paid</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th>Current Balance</th>
+                      <th class="text-center"></th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}

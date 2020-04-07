@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Invoice</title>
+  <title>Invoice | Metro Motors</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -56,18 +56,16 @@
       <div class="col-sm-4 invoice-col">
         To
         <address>
-          <strong>John Doe</strong><br>
-          795 Folsom Ave, Suite 600<br>
-          San Francisco, CA 94107<br>
-          Phone: (555) 539-1037<br>
-          Email: john.doe@example.com
+          <strong>{{ customer_name }}</strong><br>
+          {{ customer_address }}<br>
+          Phone: {{ customer_phone }}<br>
         </address>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
         <b>Invoice #007612</b><br>
         <br>
-        <b>Order ID:</b> 4F3S8J<br>
+        <b>Order ID:</b> {{ order_id }}<br>
       </div>
       <!-- /.col -->
     </div>
@@ -79,42 +77,21 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th>Qty</th>
+            <th>S.No</th>
             <th>Product</th>
-            <th>Rate</th>
-            <th>Description</th>
+            <th>Qty</th>
             <th>Subtotal</th>
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td>1</td>
-            <td>Call of Duty</td>
-            <td>455-981-221</td>
-            <td>El snort testosterone trophy driving gloves handsome</td>
-            <td>$64.50</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>Need for Speed IV</td>
-            <td>247-925-726</td>
-            <td>Wes Anderson umami biodiesel</td>
-            <td>$50.00</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>Monsters DVD</td>
-            <td>735-845-642</td>
-            <td>Terry Richardson helvetica tousled street art master</td>
-            <td>$10.70</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>Grown Ups Blue Ray</td>
-            <td>422-568-642</td>
-            <td>Tousled lomo letterpress</td>
-            <td>$25.99</td>
-          </tr>
+          {% for product in products %}
+              <tr>
+                <td>{{ product.serial }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.sub_total }}</td>
+              </tr>
+          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -124,26 +101,31 @@
 
     <div class="row">
       <!-- /.col -->
-      <div class="col-xs-6 pull-right">
-        <p class="lead">Total Items: 15</p>
+      <div class="col-xs-5 pull-right">
+        <p class="lead">Total Items: {{ total_items_quantity }}</p>
 
         <div class="table-responsive">
           <table class="table">
             <tr>
               <th style="width:50%">Subtotal:</th>
-              <td>$250.30</td>
+              <td class="text-right">{{ sub_total }}</td>
             </tr>
             <tr>
               <th>Last Balance</th>
-              <td>$10.34</td>
+              <td class="text-right">{{ last_balance }}</td>
             </tr>
             <tr>
               <th>P&F</th>
-              <td>$5.80</td>
+              <td class="text-right">{{ p_and_f }}</td>
             </tr>
             <tr>
+              <th>Round Off</th>
+              <td class="text-right">{{ round_off }}</td>
+            </tr>
+            <tr>
+            <tr>
               <th>Total:</th>
-              <td>$265.24</td>
+              <td class="text-right"><b>{{ total_amount }}</b></td>
             </tr>
           </table>
         </div>
@@ -151,6 +133,19 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
+    <div class="row">
+      <div class="col-xs-12">
+        <p>
+            <b>Terms and Conditions:</b>
+        </p>
+      </div>
+      <div class="col-xs-12">
+          <ul>
+              <li><b>Electronic items like CDI's and relays once sold cannot be returned back or exchanged.</b></li>
+          </ul>
+      </div>
+      <!-- /.col -->
+    </div>
   </section>
   <!-- /.content -->
 </div>

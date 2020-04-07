@@ -12,9 +12,10 @@
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-          <div class="box">
+          <div class="box box-success">
             <div class="box-header">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Select the type of customer</h1>
+                {% csrf_token %}
                 <div class="col-sm-3">
                   <select class="form-control" onchange="customerChange()" id="customer_type">
                       <option>Please select a value</option>
@@ -48,7 +49,8 @@
                         </div>
                     </div>
                 </div>
-              <table class="table table-bordered table-striped">
+              <div class="box-body">
+                  <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
                   <th class="text-center" style='width:5px;'>#</th>
@@ -64,6 +66,7 @@
 
                 </tbody>
               </table>
+              </div>
             <div class="text-center" style="margin-top: 5px;">
                 <button class="btn btn-success" onclick="addOneRow()">+</button>
             </div>
@@ -73,8 +76,9 @@
           <!-- /.box -->
         </div>
         <!-- /.col -->
+
         <div class="col-md-6 pull-right">
-          <div class="box">
+          <div class="box box-success">
             <div class="box-header with-border">
                 <h3 class="box-title"><b>Grand Total</b></h3>
             </div>
@@ -87,15 +91,15 @@
                 </tr>
                 <tr>
                   <th>Last Balance</th>
-                  <th class="col-xs-3"><input type="number" value=0 class="form-control" id="last_balance" onchange="calculateGrandTotal()"></th>
+                  <th class="col-xs-3"><input type="number" value=0 class="form-control" id="last_balance" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Packaging & Forwarding</th>
-                  <th><input type="number" value=0 class="form-control" id="p_and_f" onchange="calculateGrandTotal()"></th>
+                  <th><input type="number" value=0 class="form-control" id="p_and_f" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Round Off</th>
-                  <th><input type="number" value=0 class="form-control" id="round_off" onchange="calculateGrandTotal()"></th>
+                  <th><input type="number" value=0 class="form-control" id="round_off" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Total Amount</th>
@@ -103,11 +107,11 @@
                 </tr>
                 <tr>
                   <th>Amount Paid</th>
-                  <th><input type="number" class="form-control" id="amount_paid" value="0" onchange="calculateGrandTotal()"></th>
+                  <th><input type="number" class="form-control" id="amount_paid" value="0" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
-                  <th>Remaining Balance</th>
-                  <th class="text-center"><span id="remaining_balance"></span></th>
+                  <th>Current Balance</th>
+                  <th class="text-center"><span id="current_balance"></span></th>
                 </tr>
               </table>
             </div>

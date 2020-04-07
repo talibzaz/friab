@@ -2,9 +2,9 @@ function generateTable(i){
     $('#tbody').append("<tr id='tr_item_"+i+"'>"+
         "<td class='text-center' style='padding-top:15px;'>"+i+"</td>"+
         "<td><input class='form-control' type='text' id='item_name_"+i+"'></td>"+
-        "<td><input class='form-control' type='number' value=1 id='item_quantity_"+i+"' value onchange='calculate_row_total(this.id)'></td>"+
-        "<td><input class='form-control' type='number' id='item_mrp_"+i+"' value onchange='calculate_row_total(this.id)'></td>"+
-        "<td><input class='form-control' type='number' id='item_discount_"+i+"' value onchange='calculate_row_total(this.id)'></td>"+
+        "<td><input class='form-control' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
+        "<td><input class='form-control' type='number' id='item_mrp_"+i+"' onkeyup='calculate_row_total(this.id)''></td>"+
+        "<td><input class='form-control' type='number' id='item_discount_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td class='text-center' style='padding-top:15px'><b><span id='item_total_"+i+"'></span></b></td>"+
         "<td class='text-center'>" +
             "<a class='btn' id="+i+" onclick='clearRowData(this.id)'><i class='fa fa-clear'></i>x</a>" +
@@ -65,8 +65,8 @@ function calculateGrandTotal() {
     let total_amount = parseFloat($('#sub_total').text()) + parseFloat($('#last_balance').val()) +
         parseFloat($('#p_and_f').val()) + parseFloat($('#round_off').val()) ;
     $('#total_amount').empty().append(total_amount);
-    let remaining_balance = total_amount - parseFloat($('#amount_paid').val());
-    $('#remaining_balance').empty().append(remaining_balance)
+    let current_balance = total_amount - parseFloat($('#amount_paid').val());
+    $('#current_balance').empty().append(current_balance)
 }
 
 function clearRowData(id) {
@@ -94,7 +94,7 @@ function customerChange() {
             "<div class='row form-group'>\n" +
             "                  <label for='name' class='col-sm-2 control-label'>Name</label>\n" +
             "                  <div class='col-sm-4'>\n" +
-            "                    <input type='text' name='name' class='form-control' placeholder='Name of Customer...'>\n" +
+            "                    <input type='text' id='name' class='form-control' placeholder='Name of Customer...'>\n" +
             "                  </div>\n" +
             "                  <label for='date' class='col-sm-1 control-label'>Category</label>\n" +
             "                  <div class='col-sm-2'>\n" +
@@ -109,11 +109,11 @@ function customerChange() {
             "              <div class='row form-group'>\n" +
             "                  <label for='address' class='col-sm-2 control-label'>Address</label>\n" +
             "                  <div class='col-sm-4'>\n" +
-            "                    <input type='text' name=\"address\" class='form-control' placeholder='Address...'>\n" +
+            "                    <input type='text' id='address' class='form-control' placeholder='Address...'>\n" +
             "                  </div>\n" +
             "                  <label for='phone' class='col-sm-1 control-label'>Phone</label>\n" +
             "                  <div class='col-sm-2'>\n" +
-            "                    <input type='number' name='primary_num' class='form-control' placeholder='Phone Number'>\n" +
+            "                    <input type='number' id='primary_num' class='form-control' placeholder='Phone Number'>\n" +
             "                  </div>\n" +
             "              </div>"
         )
@@ -122,29 +122,45 @@ function customerChange() {
 
 function saveInvoice() {
     let items_count = parseInt($('#tbody tr').length);
-    let product_list = [];
-    let final_summary = [];
+    let product_list = {};
+    let final_summary = {};
+
     for(let i=1; i <= items_count; i++){
         if($('#item_total_'+i).text() !== ''){
-            product_list.push({
+            product_list[i] = {
                 'product': $('#item_name_'+i).val(),
                 'quantity': parseFloat($('#item_quantity_'+i).val()),
                 'mrp': parseFloat($('#item_mrp_'+i).val()),
                 'discount': parseFloat($('#item_discount_'+i).val()),
                 'total': parseFloat($('#item_total_'+i).text()),
-            });
+            }
+            // product_list.push({
+            //     'product': $('#item_name_'+i).val(),
+            //     'quantity': parseFloat($('#item_quantity_'+i).val()),
+            //     'mrp': parseFloat($('#item_mrp_'+i).val()),
+            //     'discount': parseFloat($('#item_discount_'+i).val()),
+            //     'total': parseFloat($('#item_total_'+i).text()),
+            // });
         }
     }
-    final_summary.push({
-        'sub_total': parseFloat($('#sub_total').text()),
-        'last_balance': parseFloat($('#last_balance').val()),
-        'p_and_f': parseFloat($('#p_and_f').val()),
-        'round_off': parseFloat($('#round_off').val()),
-        'amount_paid': parseFloat($('#amount_paid').val()),
-        'total_amount': parseFloat($('#total_amount').text()),
-        'remaining_balance': parseFloat($('#remaining_balance').text()),
-        'payment_mode': $('#payment_mode').val(),
-    });
+    final_summary['sub_total'] = parseFloat($('#sub_total').text());
+    final_summary['last_balance'] = parseFloat($('#last_balance').val());
+    final_summary['p_and_f'] = parseFloat($('#p_and_f').val());
+    final_summary['round_off'] = parseFloat($('#round_off').val());
+    final_summary['amount_paid'] = parseFloat($('#amount_paid').val());
+    final_summary['total_amount'] = parseFloat($('#total_amount').text());
+    final_summary['current_balance'] = parseFloat($('#current_balance').text());
+    final_summary['payment_mode'] = $('#payment_mode').val();
 
     // TODO: Make AJAX call to server...
+    $.post('/sales/billing/sale-bill/', {
+        'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
+        'customer_name': $('#name').val(),
+        'customer_address': $('#address').val(),
+        'phone': $('#primary_num').val(),
+        'product_list': JSON.stringify(product_list),
+        'final_summary': JSON.stringify(final_summary),
+    }, function (data) {
+        console.log(data)
+    })
 }

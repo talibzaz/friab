@@ -8,7 +8,7 @@
 * @support <https://github.com/ColorlibHQ/AdminLTE/issues>
 * @version 2.4.13-pre
 * @repository git://github.com/ColorlibHQ/AdminLTE.git
-* @license MIT <http://opensource.org/licenses/MIT>
+* @licensesidebar-menu MIT <http://opensource.org/licenses/MIT>
 */
 
 // Make sure jQuery has been loaded
@@ -900,8 +900,9 @@ throw new Error('AdminLTE requires jQuery')
     parent.addClass(ClassName.open);
     tree.slideDown(this.options.animationSpeed, function () {
       $(this.element).trigger(expandedEvent);
-      parent.css('background', 'red').height('auto');
-      console.log("parent.height('auto');");
+      // parent.css('background', 'blue').height('auto');
+      parent.height('auto');
+      console.log("parent.height('blue');");
     }.bind(this));
   };
 

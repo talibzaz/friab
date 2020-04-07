@@ -24,7 +24,9 @@ class Sales(models.Model):
     round_off = models.FloatField(null=True)
     date = models.DateTimeField(auto_now_add=True)
     amount_paid = models.FloatField()
-    remaining_bal = models.FloatField()
+    last_bal = models.FloatField()
+    current_bal = models.FloatField()
+    bill_generated = models.BooleanField(default=True)
 
     def __str__(self):
         return self.order_id
