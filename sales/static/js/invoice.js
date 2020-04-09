@@ -1,6 +1,6 @@
 function generateTable(i){
     $('#tbody').append("<tr id='tr_item_"+i+"'>"+
-        "<td class='text-center' style='padding-top:15px;'>"+i+"</td>"+
+        "<td class='text-center' style='padding-top:15px;' id='serial_"+i+"'>"+i+"</td>"+
         "<td><input class='form-control' type='text' id='item_name_"+i+"'></td>"+
         "<td><input class='form-control' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td><input class='form-control' type='number' id='item_mrp_"+i+"' onkeyup='calculate_row_total(this.id)''></td>"+
@@ -124,23 +124,22 @@ function saveInvoice() {
     let items_count = parseInt($('#tbody tr').length);
     let product_list = {};
     let final_summary = {};
+    let counter = 0
 
     for(let i=1; i <= items_count; i++){
-        if($('#item_total_'+i).text() !== ''){
+        if($('#item_total_'+i).text() !== '' && $('#item_name_'+i).val() !== ''){
+            counter++;
+            let mrp =0, discount=0, price = 0;
+            mrp = parseFloat($('#item_mrp_'+i).val());
+            discount = mrp * parseFloat($('#item_discount_'+i).val())/100;
+            price = mrp - discount;
             product_list[i] = {
-                'product': $('#item_name_'+i).val(),
+                'serial': counter,
+                'product': $('#item_name_'+i).val().toUpperCase(),
                 'quantity': parseFloat($('#item_quantity_'+i).val()),
-                'mrp': parseFloat($('#item_mrp_'+i).val()),
-                'discount': parseFloat($('#item_discount_'+i).val()),
+                'price': price ,
                 'total': parseFloat($('#item_total_'+i).text()),
             }
-            // product_list.push({
-            //     'product': $('#item_name_'+i).val(),
-            //     'quantity': parseFloat($('#item_quantity_'+i).val()),
-            //     'mrp': parseFloat($('#item_mrp_'+i).val()),
-            //     'discount': parseFloat($('#item_discount_'+i).val()),
-            //     'total': parseFloat($('#item_total_'+i).text()),
-            // });
         }
     }
     final_summary['sub_total'] = parseFloat($('#sub_total').text());
@@ -152,15 +151,37 @@ function saveInvoice() {
     final_summary['current_balance'] = parseFloat($('#current_balance').text());
     final_summary['payment_mode'] = $('#payment_mode').val();
 
-    // TODO: Make AJAX call to server...
-    $.post('/sales/billing/sale-bill/', {
-        'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        'customer_name': $('#name').val(),
-        'customer_address': $('#address').val(),
-        'phone': $('#primary_num').val(),
-        'product_list': JSON.stringify(product_list),
-        'final_summary': JSON.stringify(final_summary),
-    }, function (data) {
-        console.log(data)
-    })
+    let form = $('<form action="/sales/billing/sale-bill/" method="POST"></form>');
+    let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');
+    let customer_name = $('<input name = "cus_name" type="hidden"></input>');
+    let customer_address = $('<input name = "cus_address" type="hidden"></input>');
+    let customer_phone = $('<input name = "cus_phone" type="hidden"></input>');
+    let item_list = $('<input name = "product_list" type="hidden"></input>');
+    let summary = $('<input name = "final_summary" type="hidden"></input>');
+
+    csrfmiddlewaretoken.val($("input[name='csrfmiddlewaretoken']").val());
+    customer_name.val($('#name').val().toUpperCase());
+    customer_address.val($('#address').val().toUpperCase());
+    customer_phone.val($('#phone').val());
+    item_list.val(JSON.stringify(product_list));
+    summary.val(JSON.stringify(final_summary));
+
+    form.append(csrfmiddlewaretoken, customer_name);
+    form.append(customer_address, customer_phone);
+    form.append(item_list, summary);
+
+    $('body').append(form);
+    form.submit();
+    // $.post('/sales/billing/sale-bill/', {
+    //     'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
+    //     'customer_name': $('#name').val(),
+    //     'customer_address': $('#address').val(),
+    //     'phone': $('#primary_num').val(),
+    //     'product_list': JSON.stringify(product_list),
+    //     'final_summary': JSON.stringify(final_summary),
+    // }, function (data) {
+    //     console.log(data)
+    // })
+    // let url = "/sales/billing/print-invoice/";
+    // window.location.href = url
 }
