@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Example 2</title>
+    <title>Invoice Metro</title>
     <style>
         @page  {
             size: A4;
@@ -207,7 +207,7 @@ table tfoot tr td:first-child {
       <div id="company">
         <h2 class="name">METRO MOTORS</h2>
         <div>New Sectt. Road Opp Neelam Cinema</div>
-        <div>Srinagar J&K, 190010</div>
+        <div>Karan Nagar Srinagar J&K, 190010</div>
         <div>Ph: +91 7006 843 427</div>
         <div><a href="mailto:metrosrinagar@gmail.com">metrosrinagar@gmail.com</a></div>
       </div>
@@ -222,8 +222,8 @@ table tfoot tr td:first-child {
           <div class="address">{{ customer_phone}}</div>
         </div>
         <div id="invoice">
-          <h1>INVOICE #65259</h1>
-          <div class="date">Date of Invoice: 20-04-2020</div>
+          <h1>INVOICE #{{ invoice_id }}</h1>
+          <div class="date">Date of Invoice: {{ current_date }}</div>
         </div>
       </div>
       <table border="0" cellspacing="0" cellpadding="0">
@@ -258,16 +258,20 @@ table tfoot tr td:first-child {
             <td colspan="2">P&F</td>
             <td>{{ final_summary.p_and_f }}</td>
           </tr>
+          {% if final_summary.last_balance != 0 %}
           <tr>
             <td colspan="2"></td>
             <td colspan="2">LAST BAL.</td>
             <td>{{ final_summary.last_balance }}</td>
           </tr>
+          {% endif %}
+          {% if final_summary.round_off != 0 %}
           <tr>
             <td colspan="2"></td>
             <td colspan="2">ROUND OFF</td>
             <td>{{ final_summary.round_off }}</td>
           </tr>
+          {% endif %}
           <tr>
             <td colspan="2"></td>
             <td colspan="2">GRAND TOTAL</td>

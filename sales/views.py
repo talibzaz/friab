@@ -1,3 +1,5 @@
+import os
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
@@ -9,7 +11,9 @@ from django.views import View
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
+from sales.utils.utils import get_current_date
 import json
+import uuid
 
 
 class AddCustomerDetailsView(TemplateResponseMixin, View):
@@ -47,13 +51,14 @@ class SaleBillView(TemplateResponseMixin, View):
         return self.render_to_response(template_values)
 
     def post(self, request):
-        print(self.request.POST)
         products = json.loads(self.request.POST['product_list'])
         for key in products:
             print(products[key])
 
         final_summary = json.loads(self.request.POST['final_summary'])
-
+        gen_uuid = uuid.uuid4()
+        invoice_id = str(gen_uuid).split("-")
+        # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")
         response['Content-Disposition'] = "inline; filename=file.pdf"
         html = render_to_string("sales/print-invoice.html", {
@@ -61,36 +66,25 @@ class SaleBillView(TemplateResponseMixin, View):
             'customer_address': self.request.POST['cus_address'],
             'customer_phone': self.request.POST['cus_phone'],
             'products': products,
-            'final_summary': final_summary
+            'final_summary': final_summary,
+            'current_date': get_current_date(),
+            'invoice_id': invoice_id[0],
         })
         font_config = FontConfiguration()
         HTML(string=html).write_pdf(response, font_config=font_config)
+
+        # SAVING INVOICE PDF TO DISK
+        path = "sales/pdf/{date}".format(date=get_current_date())
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if os.path.exists(path):
+            f = open(os.path.join(path, '{name}_{id}.pdf'.format(
+                name=self.request.POST['cus_name'].replace(" ", "_"),
+                id=invoice_id[0]
+            )), 'wb')
+            f.write(HTML(string=html).write_pdf())
+
         return response
-
-
-# class PrintInvoiceView(View):
-#
-#     def get(self, request):
-#         template_values = {
-#             'STATIC_URL': settings.STATIC_URL,
-#             'customer_name': 'John Doe',
-#             'customer_address': 'Magam, Baramulla',
-#             'customer_phone': '+91 990 669 6262',
-#             'order_id': 'C12J91',
-#
-#         }
-#         response = HttpResponse(content_type="application/pdf")
-#         response['Content-Disposition'] = "inline; filename=file.pdf"
-#         html = render_to_string("sales/print-invoice.html", {
-#             'STATIC_URL': settings.STATIC_URL,
-#             'customer_name': 'John Doe',
-#             'customer_address': 'Magam, Baramulla',
-#             'customer_phone': '+91 990 669 6262',
-#             'order_id': 'C12J91',
-#         })
-#         font_config = FontConfiguration()
-#         HTML(string=html).write_pdf(response, font_config=font_config)
-#         return response
 
 
 class GetCustomersList(View):
