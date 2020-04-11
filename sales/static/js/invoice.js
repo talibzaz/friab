@@ -45,7 +45,7 @@ function calculateSubTotal() {
             sub_total += parseFloat(total)
         }
     }
-    $('#sub_total').empty().append(sub_total);
+    $('#sub_total').empty().append(sub_total.toFixed(2));
     calculateGrandTotal();
 }
 
@@ -56,7 +56,7 @@ function calculate_row_total(e){
     let mrp = $('#item_mrp_'+res[2]).val();
     let discount = $('#item_discount_'+res[2]).val();
     let total = (quantity * mrp) - ((quantity * mrp * discount) / 100);
-    $('#item_total_'+res[2]).empty().append(total);
+    $('#item_total_'+res[2]).empty().append(total.toFixed(2));
 
     calculateSubTotal();
 }
@@ -64,9 +64,9 @@ function calculate_row_total(e){
 function calculateGrandTotal() {
     let total_amount = parseFloat($('#sub_total').text()) + parseFloat($('#last_balance').val()) +
         parseFloat($('#p_and_f').val()) + parseFloat($('#round_off').val()) ;
-    $('#total_amount').empty().append(total_amount);
+    $('#total_amount').empty().append(total_amount.toFixed(2));
     let current_balance = total_amount - parseFloat($('#amount_paid').val());
-    $('#current_balance').empty().append(current_balance)
+    $('#current_balance').empty().append(current_balance.toFixed(2))
 }
 
 function clearRowData(id) {
@@ -137,7 +137,7 @@ function saveInvoice() {
                 'serial': counter,
                 'product': $('#item_name_'+i).val().toUpperCase(),
                 'quantity': parseFloat($('#item_quantity_'+i).val()),
-                'price': price ,
+                'price': price.toFixed(2) ,
                 'total': parseFloat($('#item_total_'+i).text()),
             }
         }
@@ -172,16 +172,4 @@ function saveInvoice() {
 
     $('body').append(form);
     form.submit();
-    // $.post('/sales/billing/sale-bill/', {
-    //     'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-    //     'customer_name': $('#name').val(),
-    //     'customer_address': $('#address').val(),
-    //     'phone': $('#primary_num').val(),
-    //     'product_list': JSON.stringify(product_list),
-    //     'final_summary': JSON.stringify(final_summary),
-    // }, function (data) {
-    //     console.log(data)
-    // })
-    // let url = "/sales/billing/print-invoice/";
-    // window.location.href = url
 }
