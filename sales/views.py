@@ -87,10 +87,20 @@ class SaleBillView(TemplateResponseMixin, View):
         return response
 
 
-class GetCustomersList(View):
-    # Get list of customers
+class TestView(TemplateResponseMixin, View):
+    template_name = 'sales/print-invoice.html'
+
     def get(self, request):
-        return HttpResponse('List containing customers')
+        template_values = {
+            'customer_name': 'Mohd. Shamim',
+            'customer_address': 'Qamarwari',
+            'customer_phone': '7006843427',
+            'products': '',
+            'final_summary': '',
+            'current_date': get_current_date(),
+            'invoice_id': '12345',
+        }
+        return self.render_to_response(template_values)
 
 
 class OrderDetailsView(TemplateResponseMixin, View):
