@@ -1,10 +1,37 @@
+$(document).ready(function () {
+    if(!!window.performance && window.performance.navigation.type === 2)
+    {
+        window.location.reload();
+    }
+   document.getElementById("name").focus()
+
+});
+
+// EVENTS TRIGGERED ON PRESSING ENTER.
+$('body').on('keypress', 'input', function (e) {
+    if (e.which === 13) {
+       e.preventDefault();
+       let inputs = $(':input');
+       let nextInput = inputs.get(inputs.index(this) + 1);
+       if (nextInput) {
+          nextInput.focus();
+          nextInput.select();
+       }
+    }
+});
+$("#phone").keyup(function (event) {
+    if(event.keyCode === 13){
+        $('#total_items').focus();
+    }
+});
+
 function generateTable(i){
     $('#tbody').append("<tr id='tr_item_"+i+"'>"+
         "<td class='text-center' style='padding-top:15px;' id='serial_"+i+"'>"+i+"</td>"+
-        "<td><input class='form-control' type='text' id='item_name_"+i+"'></td>"+
-        "<td><input class='form-control' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
-        "<td><input class='form-control' type='number' id='item_mrp_"+i+"' onkeyup='calculate_row_total(this.id)''></td>"+
-        "<td><input class='form-control' type='number' id='item_discount_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
+        "<td><input class='form-control body_ele' type='text' id='item_name_"+i+"'></td>"+
+        "<td><input class='form-control body_ele' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
+        "<td><input class='form-control body_ele' type='number' id='item_mrp_"+i+"' onkeyup='calculate_row_total(this.id)''></td>"+
+        "<td><input class='form-control body_ele' type='number' id='item_discount_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td class='text-center' style='padding-top:15px'><b><span id='item_total_"+i+"'></span></b></td>"+
         "<td class='text-center'>" +
             "<a class='btn' id="+i+" onclick='clearRowData(this.id)'><i class='fa fa-clear'></i>x</a>" +
@@ -30,9 +57,12 @@ function addMultipleRows() {
 function addOneRow() {
     let rowCount = parseInt($('#tbody tr').length);
     if (rowCount === 0){
-        generateTable(1)
+        generateTable(1);
+        document.getElementById("item_name_"+1).focus()
     } else {
-        generateTable(rowCount+1)
+        let current_row = rowCount + 1;
+        generateTable(rowCount+1);
+        document.getElementById("item_name_"+current_row).focus()
     }
 }
 
