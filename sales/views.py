@@ -64,14 +64,14 @@ class SaleBillView(TemplateResponseMixin, View):
         html = render_to_string("sales/print-invoice.html", {
             'customer_name': self.request.POST['cus_name'],
             'customer_address': self.request.POST['cus_address'],
-            'customer_phone': self.request.POST['cus_phone'],
+            # 'customer_phone': self.request.POST['cus_phone'],
             'products': products,
             'final_summary': final_summary,
             'current_date': get_current_date(),
             'invoice_id': invoice_id[0],
         })
         font_config = FontConfiguration()
-        HTML(string=html).write_pdf(response, font_config=font_config)
+        HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
 
         # SAVING INVOICE PDF TO DISK
         path = "sales/pdf/{date}".format(date=get_current_date())
@@ -82,7 +82,7 @@ class SaleBillView(TemplateResponseMixin, View):
                 name=self.request.POST['cus_name'].replace(" ", "_"),
                 id=invoice_id[0]
             )), 'wb')
-            f.write(HTML(string=html).write_pdf())
+            f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
 
         return response
 
@@ -92,6 +92,7 @@ class TestView(TemplateResponseMixin, View):
 
     def get(self, request):
         template_values = {
+            'STATIC_URL': settings.STATIC_URL,
             'customer_name': 'Mohd. Shamim',
             'customer_address': 'Qamarwari',
             'customer_phone': '7006843427',

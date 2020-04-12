@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
   <head>
     <meta charset="utf-8">
     <title>Invoice Metro</title>
@@ -47,18 +48,18 @@ header {
 
 #logo {
   float: left;
-  margin-top: 8px;
+  margin-left: 11px;
 }
 
 #logo img {
-  height: 70px;
+  height: 93px;
+    width: 85px;
 }
 
 #company {
   float: right;
   text-align: right;
 }
-
 
 #details {
   margin-bottom: 50px;
@@ -71,7 +72,12 @@ header {
 }
 
 #client .to {
-  color: #777777;
+    padding-bottom: 2px;
+  color: #181110;
+}
+
+#client .name {
+    padding-bottom: 2px;
 }
 
 h2.name {
@@ -90,10 +96,10 @@ h2.name {
 
 #invoice h1 {
   color: #0087C3;
-  font-size: 2.4em;
+  font-size: 1.6em;
   line-height: 1em;
   font-weight: normal;
-  margin: 0  0 10px 0;
+  margin: 0  0 5px 0;
 }
 
 #invoice .date {
@@ -120,7 +126,7 @@ table td {
 
 table th {
   white-space: nowrap;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 table td {
@@ -170,16 +176,17 @@ table tbody tr:last-child td {
 
 .parent {
   display: block;
-    position: relative;
-    top: 20px;
+  height: 185px;
+  margin-bottom: 10px;
+    margin-top: 60px;
 }
 .bank_info {
-    display: inline-block;
     width: 50%;
     font-size: 12px;
+    float: left;
+    margin-top: 40px;
 }
 .table_foot{
-    display: inline-block;
     width: 50%;
     float: right;
 }
@@ -189,6 +196,7 @@ table tfoot td {
   background: #FFFFFF;
   border-bottom: none;
   font-size: 1.2em;
+    font-weight: 600;
   white-space: nowrap;
   border-top: 1px solid #AAAAAA;
 }
@@ -211,8 +219,7 @@ table tfoot tr td:first-child {
     font-weight: bold;
 }
 #notices{
-    position: relative;
-    top: 20px;
+    display: block;
     padding-left: 6px;
     border-left: 6px solid #0087C3;
     font-size: 12px;
@@ -222,7 +229,7 @@ table tfoot tr td:first-child {
   <body>
     <header class="clearfix">
       <div id="logo">
-        <img src="{{ STATIC_URL }}img/metro_logo.png">
+        <img src="{% static 'img/metro_logo.png' %}">
       </div>
       <div id="company">
         <h2 class="name" id="company_name">METRO MOTORS</h2>
@@ -239,7 +246,6 @@ table tfoot tr td:first-child {
           <div class="to">INVOICE TO:</div>
           <h2 class="name">{{ customer_name }}</h2>
           <div class="address">{{ customer_address}}</div>
-          <div class="address">{{ customer_phone}}</div>
         </div>
         <div id="invoice">
           <h1>INVOICE #{{ invoice_id }}</h1>
