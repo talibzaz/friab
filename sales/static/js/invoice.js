@@ -1,3 +1,4 @@
+// RELOAD PAGE EVERYTIME BACK BUTTON GETS PRESSED ON BROWSER.
 $(document).ready(function () {
     if(!!window.performance && window.performance.navigation.type === 2)
     {
@@ -25,6 +26,7 @@ $("#phone").keyup(function (event) {
     }
 });
 
+// THIS FUNCTION CREATES TABLE.
 function generateTable(i){
     $('#tbody').append("<tr id='tr_item_"+i+"'>"+
         "<td class='text-center' style='padding-top:15px;' id='serial_"+i+"'>"+i+"</td>"+
@@ -40,6 +42,7 @@ function generateTable(i){
     );
 }
 
+// THIS FUNCTION CREATES TABLE BASED ON USER'S INPUT FOR NUMBER OF ROWS IN TABLE
 function addMultipleRows() {
     let rowCount = parseInt($('#tbody tr').length);
     let items_count = parseInt($('#total_items').val());
@@ -54,6 +57,7 @@ function addMultipleRows() {
     }
 }
 
+// ADDS ONLY ONE ROW IN THE TABLE.
 function addOneRow() {
     let rowCount = parseInt($('#tbody tr').length);
     if (rowCount === 0){
@@ -66,6 +70,7 @@ function addOneRow() {
     }
 }
 
+// CALCULATES THE SUB TOTAL OF BILL.
 function calculateSubTotal() {
     let sub_total = 0;
     let items_count = parseInt($('#tbody tr').length);
@@ -79,6 +84,7 @@ function calculateSubTotal() {
     calculateGrandTotal();
 }
 
+// CALCULATES THE TOTAL AMOUNT OF JUST ONE ROW.
 function calculate_row_total(e){
     let res = e.split('_');
 
@@ -91,6 +97,7 @@ function calculate_row_total(e){
     calculateSubTotal();
 }
 
+// CALCULATES THE GRAND TOTAL OF BILL
 function calculateGrandTotal() {
     let total_amount = parseFloat($('#sub_total').text()) + parseFloat($('#last_balance').val()) +
         parseFloat($('#p_and_f').val()) + parseFloat($('#round_off').val()) ;
@@ -99,6 +106,7 @@ function calculateGrandTotal() {
     $('#current_balance').empty().append(current_balance.toFixed(2))
 }
 
+// CLEARS THE DATA IN ONE SINGLE ROW
 function clearRowData(id) {
     $('#item_name_'+id).val('');
     $('#item_quantity_'+id).val(1);
@@ -150,24 +158,27 @@ function customerChange() {
     }
 }
 
+// SENDS THE FINAL DATA TO SERVER FOR PDF GENERATION PURPOSE.
 function saveInvoice() {
     let items_count = parseInt($('#tbody tr').length);
     let product_list = {};
     let final_summary = {};
-    let counter = 0
+    let counter = 0;
 
     for(let i=1; i <= items_count; i++){
         if($('#item_total_'+i).text() !== '' && $('#item_name_'+i).val() !== ''){
             counter++;
-            let mrp =0, discount=0, price = 0;
+            let mrp =0, discount_amount=0, price = 0;
             mrp = parseFloat($('#item_mrp_'+i).val());
-            discount = mrp * parseFloat($('#item_discount_'+i).val())/100;
-            price = mrp - discount;
+            discount_amount = mrp * parseFloat($('#item_discount_'+i).val())/100;
+            price = mrp - discount_amount;
             product_list[i] = {
                 'serial': counter,
                 'product': $('#item_name_'+i).val().toUpperCase(),
+                'mrp': mrp,
+                'discount': parseFloat($('#item_discount_'+i).val()),
                 'quantity': parseFloat($('#item_quantity_'+i).val()),
-                'price': price.toFixed(2) ,
+                'price': price.toFixed(2),
                 'total': parseFloat($('#item_total_'+i).text()),
             }
         }

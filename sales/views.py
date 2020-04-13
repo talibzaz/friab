@@ -58,18 +58,21 @@ class SaleBillView(TemplateResponseMixin, View):
         final_summary = json.loads(self.request.POST['final_summary'])
         gen_uuid = uuid.uuid4()
         invoice_id = str(gen_uuid).split("-")
-        # WRITING CONTENT TO HTML RESPONSE.
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = "inline; filename=file.pdf"
-        html = render_to_string("sales/print-invoice.html", {
+
+        template_data = {
             'customer_name': self.request.POST['cus_name'],
             'customer_address': self.request.POST['cus_address'],
-            # 'customer_phone': self.request.POST['cus_phone'],
+            'customer_phone': self.request.POST['cus_phone'],
             'products': products,
             'final_summary': final_summary,
             'current_date': get_current_date(),
             'invoice_id': invoice_id[0],
-        })
+        }
+
+        # WRITING CONTENT TO HTML RESPONSE.
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = "inline; filename=file.pdf"
+        html = render_to_string("sales/print-invoice.html", template_data)
         font_config = FontConfiguration()
         HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
 
@@ -83,6 +86,13 @@ class SaleBillView(TemplateResponseMixin, View):
                 id=invoice_id[0]
             )), 'wb')
             f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
+
+        # SAVING JSON FILE WITH USER'S DATA.
+        with open('{path}/{id}.json'.format(
+            path=path,
+            id=invoice_id[0],
+        ), 'w') as outfile:
+            json.dump(template_data, outfile)
 
         return response
 
