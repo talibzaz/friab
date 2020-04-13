@@ -40,7 +40,7 @@ class ViewCustomerDetails(TemplateResponseMixin, View):
         return self.render_to_response(template_values)
 
 
-class SaleBillView(TemplateResponseMixin, View):
+class CreateInvoiceView(TemplateResponseMixin, View):
     template_name = 'sales/retail_bill.html'
 
     def get(self, request):
@@ -95,6 +95,16 @@ class SaleBillView(TemplateResponseMixin, View):
             json.dump(template_data, outfile)
 
         return response
+
+
+class SearchInvoiceView(TemplateResponseMixin, View):
+    template_name = 'sales/search_invoice.html'
+
+    def get(self, request):
+        template_values = {
+            'STATIC_URL': settings.STATIC_URL,
+        }
+        return self.render_to_response(template_values)
 
 
 class TestView(TemplateResponseMixin, View):
