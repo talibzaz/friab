@@ -1,0 +1,66 @@
+body  {
+    font-family: 'Raleway', sans-serif;
+}
+.search-body {
+    background-image: url("../img/search-bg.jpg");
+    background-repeat: no-repeat;
+    background-size: 78em 42em;
+}
+
+.heading {
+    text-align: center;
+    margin-top: 33px;
+}
+.heading h1 {
+    color: #ffffff;
+}
+.search-box {
+    background-color: #DAF7A6;
+    width: 20cm;
+    height: 2cm;
+    /*margin: 70px auto 0;*/
+    position: fixed;
+    top: 188px;
+    left: 371px;
+    border-radius: 25px;
+}
+.based {
+    font-weight: 600;
+    /*position: fixed;*/
+    /*top: 219px;*/
+    /*left: 409px;*/
+    position: relative;
+    left: 18px;
+    top: 40%;
+    width: 124px;
+}
+.criteria {
+    /*position: fixed;*/
+    /*top: 212px;*/
+    /*left: 548px;*/
+    /*width: 103px;*/
+    position: relative;
+    top: 1%;
+    left: 146px;
+    width: 103px;;
+}
+.value-field{
+    position: relative;
+    top: -33px;
+    left: 267px;
+    width: 291px;
+}
+.send-button {
+    position: relative;
+    top: -67px;
+    left: 654px;
+}
+.invoice-body {
+    background-image: url("../img/invoice-bg.jpg");
+    background-repeat: no-repeat;
+    background-size: 78em 62em;
+}
+.box-success {
+    background-color: #DAF7A6;
+    border-radius: 25px;
+}

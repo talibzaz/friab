@@ -20,11 +20,6 @@ $('body').on('keypress', 'input', function (e) {
        }
     }
 });
-$("#phone").keyup(function (event) {
-    if(event.keyCode === 13){
-        $('#total_items').focus();
-    }
-});
 
 // THIS FUNCTION CREATES TABLE.
 function generateTable(i){

@@ -1,5 +1,32 @@
 {% extends 'app/base_site.html' %}
 
 {% block content %}
+  <div class="content-wrapper search-body">
+        <div class="heading">
+            <h1>Find Invoice!</h1>
+        </div>
+        <div class="search-box">
+            <div class="based">Search based on:</div>
+            <div class="criteria">
+                <select class="form-control">
+                    <option value="id">ID</option>
+                    <option value="name">Name</option>
+                    <option value="date">Date</option>
+                </select>
+            </div>
+            <div class="value-field">
+                <input type="text" class="form-control">
+            </div>
+            <div class="send-button">
+                <button class="btn btn-primary">Search</button>
+            </div>
+        </div>
+        <div class="data-table">
+
+        </div>
+  </div>
+
+  <link href="https://fonts.googleapis.com/css2?family=Gotu&family=Raleway&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/invoice.css">
 
 {% endblock %}

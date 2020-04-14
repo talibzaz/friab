@@ -121,7 +121,9 @@ table th,
 table td {
   padding: 3px;
   text-align: center;
-  border-bottom: 1px solid #FFFFFF;
+}
+table tr {
+      border-bottom: 1px solid #AAAAAA;
 }
 
 table th {
@@ -177,17 +179,18 @@ table tbody tr:last-child td {
 .parent {
   display: block;
   height: 185px;
+  width: 18cm;
   margin-bottom: 10px;
-    margin-top: 60px;
+  margin-top: 60px;
 }
 .bank_info {
-    width: 50%;
+    width: 60%;
     font-size: 12px;
     float: left;
     margin-top: 40px;
 }
 .table_foot{
-    width: 50%;
+    width: 40%;
     float: right;
 }
 
@@ -209,7 +212,6 @@ table tfoot tr:last-child td {
   color: #6CCB00;
   font-size: 1.4em;
   border-top: 1px solid #57B223;
-
 }
 
 table tfoot tr td:first-child {
@@ -224,7 +226,7 @@ table tfoot tr td:first-child {
     border-left: 6px solid #0087C3;
     font-size: 12px;
 }
-    </style>
+</style>
   </head>
   <body>
     <header class="clearfix">
@@ -252,7 +254,7 @@ table tfoot tr td:first-child {
           <div class="date">Date of Invoice: {{ current_date }}</div>
         </div>
       </div>
-      <table border="0" cellspacing="0" cellpadding="0">
+      <table class="table" border="0" cellspacing="0" cellpadding="0">
         <thead>
           <tr>
             <th class="no">#</th>

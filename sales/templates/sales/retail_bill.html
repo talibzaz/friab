@@ -1,6 +1,7 @@
 {% extends 'app/base_site.html' %}
 
 {% block content %}
+  <div class="content-wrapper invoice-body">
 
     <section class="content-header">
       <h1>
@@ -154,7 +155,8 @@
       </div>
     </div>
     </section>
-
+  </div>
     <script src="{{ STATIC_URL }}js/invoice.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/invoice.css">
 
 {% endblock %}
