@@ -11,9 +11,11 @@ from django.views import View
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
-from sales.utils.utils import get_current_date
+from datetime import date
 import json
 import uuid
+
+from .models import Invoice, Item
 
 
 class AddCustomerDetailsView(TemplateResponseMixin, View):
@@ -51,13 +53,15 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         return self.render_to_response(template_values)
 
     def post(self, request):
+
         products = json.loads(self.request.POST['product_list'])
-        for key in products:
-            print(products[key])
 
         final_summary = json.loads(self.request.POST['final_summary'])
+
         gen_uuid = uuid.uuid4()
         invoice_id = str(gen_uuid).split("-")
+
+        today = date.today()
 
         template_data = {
             'customer_name': self.request.POST['cus_name'],
@@ -65,9 +69,38 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'customer_phone': self.request.POST['cus_phone'],
             'products': products,
             'final_summary': final_summary,
-            'current_date': get_current_date(),
+            'current_date': today.strftime("%d-%B-%y"),
             'invoice_id': invoice_id[0],
         }
+
+        # SAVING DATA TO DB.
+        invoice = Invoice(
+            id=template_data['invoice_id'],
+            customer_name=template_data['customer_name'],
+            customer_address=template_data['customer_address'],
+            customer_phone=template_data['customer_phone'],
+            date=today,
+            sub_total=template_data['final_summary']['sub_total'],
+            last_bal=template_data['final_summary']['last_balance'],
+            p_and_f=template_data['final_summary']['p_and_f'],
+            round_off=template_data['final_summary']['round_off'],
+            total_amount=template_data['final_summary']['total_amount'],
+            amount_paid=template_data['final_summary']['amount_paid'],
+            current_bal=template_data['final_summary']['current_balance'],
+        )
+        invoice.save()
+
+        for p in products:
+            item = Item(
+                invoice=invoice,
+                item_name=products[p]['product'],
+                item_quantity=products[p]['quantity'],
+                item_mrp=products[p]['mrp'],
+                item_discount=products[p]['discount'],
+                item_sp=products[p]['price'],
+                item_total=products[p]['total'],
+            )
+            item.save()
 
         # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")
@@ -77,7 +110,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
 
         # SAVING INVOICE PDF TO DISK
-        path = "sales/pdf/{date}".format(date=get_current_date())
+        path = "sales/pdf/{date}".format(date=today.strftime("%d-%B-%y"))
         if not os.path.exists(path):
             os.makedirs(path)
         if os.path.exists(path):
@@ -86,13 +119,6 @@ class CreateInvoiceView(TemplateResponseMixin, View):
                 id=invoice_id[0]
             )), 'wb')
             f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
-
-        # SAVING JSON FILE WITH USER'S DATA.
-        with open('{path}/{id}.json'.format(
-            path=path,
-            id=invoice_id[0],
-        ), 'w') as outfile:
-            json.dump(template_data, outfile)
 
         return response
 

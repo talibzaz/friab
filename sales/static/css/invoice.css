@@ -16,44 +16,56 @@ body  {
 }
 .search-box {
     background-color: #DAF7A6;
+    border-radius: 25px;
     width: 20cm;
     height: 2cm;
-    /*margin: 70px auto 0;*/
-    position: fixed;
-    top: 188px;
-    left: 371px;
-    border-radius: 25px;
+    /*position: fixed;*/
+    /*top: 188px;*/
+    /*left: 371px;*/
+    display: flex;
+    margin: 0 auto;
 }
 .based {
     font-weight: 600;
-    /*position: fixed;*/
-    /*top: 219px;*/
-    /*left: 409px;*/
-    position: relative;
-    left: 18px;
-    top: 40%;
-    width: 124px;
+    /*position: relative;*/
+    /*left: 18px;*/
+    /*top: 40%;*/
+    /*width: 124px;*/
+    flex: 20%;
+    height: 28px;
+    margin-top: 28px;
+    margin-left: 10px;
 }
 .criteria {
-    /*position: fixed;*/
-    /*top: 212px;*/
-    /*left: 548px;*/
+    /*position: relative;*/
+    /*top: 1%;*/
+    /*left: 146px;*/
     /*width: 103px;*/
-    position: relative;
-    top: 1%;
-    left: 146px;
-    width: 103px;;
+    flex: 20%;
+}
+.criteria select {
+    margin-top: 20px;
+    width: 108px;
 }
 .value-field{
-    position: relative;
-    top: -33px;
-    left: 267px;
-    width: 291px;
+    /*position: relative;*/
+    /*top: -33px;*/
+    /*left: 267px;*/
+    /*width: 291px;*/
+    flex: 40%;
+}
+.send-button button {
+    margin-top: 20px;
+    margin-left: 43px;
+}
+.value-field input{
+    margin-top: 20px;
 }
 .send-button {
-    position: relative;
-    top: -67px;
-    left: 654px;
+    /*position: relative;*/
+    /*top: -67px;*/
+    /*left: 654px;*/
+    flex: 20%;
 }
 .invoice-body {
     background-image: url("../img/invoice-bg.jpg");
