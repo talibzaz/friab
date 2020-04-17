@@ -2,9 +2,9 @@ body  {
     font-family: 'Raleway', sans-serif;
 }
 .search-body {
-    background-image: url("../img/search-bg.jpg");
-    background-repeat: no-repeat;
-    background-size: 78em 42em;
+    /*background: rgb(2,0,36);*/
+    /*background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(6,78,166,1) 57%, rgba(5,100,180,1) 64%, rgba(5,109,186,1) 67%, rgba(0,212,255,1) 100%);*/
+    background-color: #019EED;
 }
 
 .heading {
@@ -15,44 +15,29 @@ body  {
     color: #ffffff;
 }
 .search-box {
-    background-color: #DAF7A6;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 25px;
     width: 20cm;
     height: 2cm;
-    /*position: fixed;*/
-    /*top: 188px;*/
-    /*left: 371px;*/
     display: flex;
     margin: 0 auto;
 }
 .based {
     font-weight: 600;
-    /*position: relative;*/
-    /*left: 18px;*/
-    /*top: 40%;*/
-    /*width: 124px;*/
-    flex: 20%;
+    flex: 17%;
     height: 28px;
     margin-top: 28px;
     margin-left: 10px;
 }
 .criteria {
-    /*position: relative;*/
-    /*top: 1%;*/
-    /*left: 146px;*/
-    /*width: 103px;*/
-    flex: 20%;
+    flex: 26%;
 }
 .criteria select {
     margin-top: 20px;
-    width: 108px;
+    width: 180px;
 }
 .value-field{
-    /*position: relative;*/
-    /*top: -33px;*/
-    /*left: 267px;*/
-    /*width: 291px;*/
-    flex: 40%;
+    flex: 43%;
 }
 .send-button button {
     margin-top: 20px;
@@ -62,10 +47,10 @@ body  {
     margin-top: 20px;
 }
 .send-button {
-    /*position: relative;*/
-    /*top: -67px;*/
-    /*left: 654px;*/
-    flex: 20%;
+    flex: 17%;
+}
+.send-button button{
+    margin-left: 25px;
 }
 .invoice-body {
     background-image: url("../img/invoice-bg.jpg");
@@ -75,4 +60,8 @@ body  {
 .box-success {
     background-color: #DAF7A6;
     border-radius: 25px;
+}
+
+.btn-get {
+    width: 75%;
 }

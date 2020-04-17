@@ -3,6 +3,7 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
+from django.views.generic import ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.template.loader import render_to_string
 
@@ -10,8 +11,9 @@ from django.views import View
 
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
-
-from datetime import date
+from django.core import serializers
+from django.http import JsonResponse
+from datetime import date, datetime
 import json
 import uuid
 
@@ -90,17 +92,20 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         )
         invoice.save()
 
+        prod_obj = []
+
         for p in products:
-            item = Item(
-                invoice=invoice,
-                item_name=products[p]['product'],
-                item_quantity=products[p]['quantity'],
-                item_mrp=products[p]['mrp'],
-                item_discount=products[p]['discount'],
-                item_sp=products[p]['price'],
-                item_total=products[p]['total'],
-            )
-            item.save()
+            new_item = Item()
+            new_item.invoice = invoice
+            new_item.item_name = products[p]['product']
+            new_item.item_mrp = products[p]['mrp']
+            new_item.item_quantity = products[p]['quantity']
+            new_item.item_discount = products[p]['discount']
+            new_item.item_sp = products[p]['price']
+            new_item.item_total = products[p]['total']
+            prod_obj.append(new_item)
+
+        Item.objects.bulk_create(prod_obj)
 
         # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")
@@ -132,6 +137,53 @@ class SearchInvoiceView(TemplateResponseMixin, View):
         }
         return self.render_to_response(template_values)
 
+    def post(self, request):
+        criteria = self.request.POST['criteria']
+
+        if criteria == 'id':
+            try:
+                invoice = Invoice.objects.get(id=self.request.POST['value'])
+                data = [{
+                    'customer_name': invoice.customer_name,
+                    'id': invoice.id,
+                    'date': invoice.date.strftime('%d-%B-%y'),
+                    'total_amount': invoice.total_amount
+                }]
+                # data = serializers.serialize('json', invoice)
+                return JsonResponse(json.dumps(data), safe=False)
+            except Invoice.DoesNotExist:
+                return JsonResponse({'error': 'ID does not exist'})
+        if criteria == 'name':
+            invoice = Invoice.objects.filter(customer_name__icontains=self.request.POST['value']).all()
+            if invoice.exists():
+                data = []
+                for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):
+                    data.append({
+                        'customer_name': i.customer_name,
+                        'id': i.id,
+                        'date': i.date.strftime('%d-%B-%y'),
+                        'total_amount': i.total_amount
+                    })
+                return JsonResponse(json.dumps(data), safe=False)
+            return JsonResponse({'error': 'Try Again!'})
+
+        if criteria == 'date':
+            date_str = self.request.POST['value']
+            date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
+
+            invoice = Invoice.objects.filter(date=date_obj).all()
+            if invoice.exists():
+                data = []
+                for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):
+                    data.append({
+                        'customer_name': i.customer_name,
+                        'id': i.id,
+                        'date': i.date.strftime('%d-%B-%y'),
+                        'total_amount': i.total_amount
+                    })
+                return JsonResponse(json.dumps(data), safe=False)
+            return JsonResponse({'error': 'Try Again!'})
+
 
 class TestView(TemplateResponseMixin, View):
     template_name = 'sales/print-invoice.html'
@@ -144,7 +196,7 @@ class TestView(TemplateResponseMixin, View):
             'customer_phone': '7006843427',
             'products': '',
             'final_summary': '',
-            'current_date': get_current_date(),
+            'current_date': date.today(),
             'invoice_id': '12345',
         }
         return self.render_to_response(template_values)
