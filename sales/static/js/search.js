@@ -74,3 +74,7 @@ function getInvoiceData() {
         $('.ctnr').show()
     });
 }
+
+$('body').on('click', '.btn-get', function () {
+    console.log(this.id);
+});
