@@ -18,7 +18,7 @@
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Buyer Name</h1>
                 {% csrf_token %}
                 <div class="col-sm-3">
-                    <input type="text" id="name" class="form-control">
+                    <input type="text" id="name" value="{{ invoice.customer_name }}" class="form-control">
 {#                  <select class="form-control" onchange="customerChange()" id="customer_type">#}
 {#                      <option>Please select a value</option>#}
 {#                      <option value="existing">Existing</option>#}
@@ -29,11 +29,11 @@
           <div class="col-xs-12 box-header" id="customer_details">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Address</h1>
               <div class="col-sm-3">
-                <input type="text" class="form-control" id="address">
+                <input type="text" class="form-control" value="{{ invoice.customer_address }}" id="address">
               </div>
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Phone</h1>
               <div class="col-sm-3">
-                <input type="text" class="form-control" id="phone">
+                <input type="text" class="form-control" value="{{ invoice.customer_phone }}" id="phone">
               </div>
           </div>
             <!-- /.box-header -->
@@ -65,7 +65,21 @@
                 </tr>
                 </thead>
                 <tbody id="tbody">
-
+                {% for item in items %}
+                    <tr id='tr_item_{{ forloop.counter }}'>
+                    <td class='text-center' style='padding-top:15px;' id='serial_{{ forloop.counter }}'>{{ forloop.counter }}
+                        <input class="hidden" id="item_id_{{ forloop.counter }}" value="{{ item.id }}">
+                    </td>
+                    <td><input class='form-control body_ele' type='text' id='item_name_{{ forloop.counter }}' value="{{ item.item_name }}"></td>
+                    <td><input class='form-control body_ele' type='number' value="{{ item.item_mrp }}" id='item_mrp_{{ forloop.counter }}' onkeyup='calculate_row_total(this.id)'></td>
+                    <td><input class='form-control body_ele' type='number' value="{{ item.item_quantity }}" id='item_quantity_{{ forloop.counter }}' onkeyup='calculate_row_total(this.id)'></td>
+                    <td><input class='form-control body_ele' type='number' value="{{ item.item_discount }}" id='item_discount_{{ forloop.counter }}' onkeyup='calculate_row_total(this.id)'></td>
+                    <td class='text-center' style='padding-top:15px'><b><span id='item_total_{{ forloop.counter }}'>{{ item.item_total }}</span></b></td>
+                    <td class='text-center'>
+                    <a class='btn' id="{{ forloop.counter }}" onclick='clearRowData(this.id)'><i class='fa fa-clear'></i>x</a>
+                    </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
               </table>
               </div>
@@ -89,31 +103,31 @@
               <table class="table table-bordered">
                 <tr>
                   <th>Sub Total</th>
-                  <th style="width: 100px;" class="text-center"><span id="sub_total"></span></th>
+                  <th style="width: 100px;" class="text-center"><span id="sub_total">{{ invoice.sub_total }}</span></th>
                 </tr>
                 <tr>
                   <th>Last Balance</th>
-                  <th class="col-xs-3"><input type="number" value=0 class="form-control" id="last_balance" onkeyup="calculateGrandTotal()"></th>
+                  <th class="col-xs-3"><input type="number" value={{ invoice.last_bal }} class="form-control" id="last_balance" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Packaging & Forwarding</th>
-                  <th><input type="number" value=0 class="form-control" id="p_and_f" onkeyup="calculateGrandTotal()"></th>
+                  <th><input type="number" value={{ invoice.p_and_f }} class="form-control" id="p_and_f" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Round Off</th>
-                  <th><input type="number" value=0 class="form-control" id="round_off" onkeyup="calculateGrandTotal()"></th>
+                  <th><input type="number" value={{ invoice.round_off }} class="form-control" id="round_off" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Total Amount</th>
-                  <th class="text-center"><span id="total_amount"></span></th>
+                  <th class="text-center"><span id="total_amount">{{ invoice.total_amount }}</span></th>
                 </tr>
                 <tr>
                   <th>Amount Paid</th>
-                  <th><input type="number" class="form-control" id="amount_paid" value="0" onkeyup="calculateGrandTotal()"></th>
+                  <th><input type="number" class="form-control" id="amount_paid" value="{{ invoice.amount_paid }}" onkeyup="calculateGrandTotal()"></th>
                 </tr>
                 <tr>
                   <th>Current Balance</th>
-                  <th class="text-center"><span id="current_balance"></span></th>
+                  <th class="text-center"><span id="current_balance">{{ invoice.current_bal }}</span></th>
                 </tr>
               </table>
             </div>
@@ -148,7 +162,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="saveInvoice()" data-dismiss="modal">Yes! Save changes</button>
+            <button type="button" class="btn btn-primary" value="{{ invoice.id }}" onclick="updateInvoice(this.value)" data-dismiss="modal">Yes! Save changes</button>
             <a href="print-invoice.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
           </div>
         </div>

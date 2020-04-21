@@ -67,7 +67,7 @@ function getInvoiceData() {
                 "                  <td>"+json[i].date+"</td>\n" +
                 "                  <td>"+json[i].total_amount+"</td>\n" +
                 "                  <td style='text-align: center'>" +
-                "<button class='btn btn-primary btn-get' id='"+ json[i].id+"'>Get</button>" +
+                "<a href='/sales/update-invoice/"+ json[i].id +"' class='btn btn-primary btn-get'>Get</a>" +
                 "                  </td>\n" +
                 "                </tr>")
         }

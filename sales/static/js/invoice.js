@@ -26,8 +26,8 @@ function generateTable(i){
     $('#tbody').append("<tr id='tr_item_"+i+"'>"+
         "<td class='text-center' style='padding-top:15px;' id='serial_"+i+"'>"+i+"</td>"+
         "<td><input class='form-control body_ele' type='text' id='item_name_"+i+"'></td>"+
-        "<td><input class='form-control body_ele' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td><input class='form-control body_ele' type='number' id='item_mrp_"+i+"' onkeyup='calculate_row_total(this.id)''></td>"+
+        "<td><input class='form-control body_ele' type='number' value=1 id='item_quantity_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td><input class='form-control body_ele' type='number' id='item_discount_"+i+"' onkeyup='calculate_row_total(this.id)'></td>"+
         "<td class='text-center' style='padding-top:15px'><b><span id='item_total_"+i+"'></span></b></td>"+
         "<td class='text-center'>" +
@@ -153,9 +153,9 @@ function customerChange() {
     }
 }
 
-// SENDS THE FINAL DATA TO SERVER FOR PDF GENERATION PURPOSE.
-function saveInvoice() {
-    let items_count = parseInt($('#tbody tr').length);
+//THE COMMON CODE BETWEEN CREATE INVOICE AND UPDATE INVOICE
+function commonStuff(url, update=false, invoice_id=null) {
+let items_count = parseInt($('#tbody tr').length);
     let product_list = {};
     let final_summary = {};
     let counter = 0;
@@ -167,7 +167,19 @@ function saveInvoice() {
             mrp = parseFloat($('#item_mrp_'+i).val());
             discount_amount = mrp * parseFloat($('#item_discount_'+i).val())/100;
             price = mrp - discount_amount;
-            product_list[i] = {
+            if (update){
+                product_list[i] = {
+                'serial': counter,
+                'item_id': $('#item_id_'+i).length !== 0 ? $('#item_id_'+i).val() : 0,
+                'product': $('#item_name_'+i).val().toUpperCase(),
+                'mrp': mrp,
+                'discount': parseFloat($('#item_discount_'+i).val()),
+                'quantity': parseFloat($('#item_quantity_'+i).val()),
+                'price': price.toFixed(2),
+                'total': parseFloat($('#item_total_'+i).text()),
+                }
+            } else {
+                product_list[i] = {
                 'serial': counter,
                 'product': $('#item_name_'+i).val().toUpperCase(),
                 'mrp': mrp,
@@ -175,6 +187,7 @@ function saveInvoice() {
                 'quantity': parseFloat($('#item_quantity_'+i).val()),
                 'price': price.toFixed(2),
                 'total': parseFloat($('#item_total_'+i).text()),
+                }
             }
         }
     }
@@ -187,7 +200,7 @@ function saveInvoice() {
     final_summary['current_balance'] = parseFloat($('#current_balance').text());
     final_summary['payment_mode'] = $('#payment_mode').val();
 
-    let form = $('<form action="/sales/billing/sale-bill/" method="POST"></form>');
+    let form = $('<form action='+ url +' method="POST"></form>');
     let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');
     let customer_name = $('<input name = "cus_name" type="hidden"></input>');
     let customer_address = $('<input name = "cus_address" type="hidden"></input>');
@@ -201,11 +214,28 @@ function saveInvoice() {
     customer_phone.val($('#phone').val());
     item_list.val(JSON.stringify(product_list));
     summary.val(JSON.stringify(final_summary));
-
+    if (update){
+        let inv_id = $('<input name = "invoice_id" type="hidden"></input>');
+        inv_id.val(invoice_id);
+        form.append(inv_id);
+    }
     form.append(csrfmiddlewaretoken, customer_name);
     form.append(customer_address, customer_phone);
     form.append(item_list, summary);
 
     $('body').append(form);
     form.submit();
+}
+
+// SENDS THE FINAL DATA TO SERVER FOR PDF GENERATION PURPOSE.
+function saveInvoice() {
+    let url = "/sales/billing/sale-bill/";
+    commonStuff(url)
+}
+
+// UPDATES THE INVOICE IN DB.
+function updateInvoice(invoice_id) {
+    let url = "/sales/update-invoice/";
+    let update = true;
+    commonStuff(url, update, invoice_id)
 }
