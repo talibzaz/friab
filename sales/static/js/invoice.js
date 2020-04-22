@@ -161,30 +161,43 @@ let items_count = parseInt($('#tbody tr').length);
     let counter = 0;
 
     for(let i=1; i <= items_count; i++){
-        if($('#item_total_'+i).text() !== '' && $('#item_name_'+i).val() !== ''){
+        if($('#item_total_'+i).text() !== ''){
             counter++;
             let mrp =0, discount_amount=0, price = 0;
+            let discount_percent=parseFloat($('#item_discount_'+i).val());
+            let quantity = parseFloat($('#item_quantity_'+i).val())
+            let product = $('#item_name_'+i).val().toUpperCase()
             mrp = parseFloat($('#item_mrp_'+i).val());
-            discount_amount = mrp * parseFloat($('#item_discount_'+i).val())/100;
+
+
+            let validity = form_validity_check(product, quantity, discount_percent, mrp);
+            if (!validity){
+                return
+            }
+            if(isNaN(discount_percent)){
+                discount_percent = 0;
+            }
+
+            discount_amount = mrp * discount_percent/100;
             price = mrp - discount_amount;
             if (update){
                 product_list[i] = {
                 'serial': counter,
                 'item_id': $('#item_id_'+i).length !== 0 ? $('#item_id_'+i).val() : 0,
-                'product': $('#item_name_'+i).val().toUpperCase(),
+                'product': product,
                 'mrp': mrp,
-                'discount': parseFloat($('#item_discount_'+i).val()),
-                'quantity': parseFloat($('#item_quantity_'+i).val()),
+                'discount': discount_percent,
+                'quantity': quantity,
                 'price': price.toFixed(2),
                 'total': parseFloat($('#item_total_'+i).text()),
                 }
             } else {
                 product_list[i] = {
                 'serial': counter,
-                'product': $('#item_name_'+i).val().toUpperCase(),
+                'product': product,
                 'mrp': mrp,
-                'discount': parseFloat($('#item_discount_'+i).val()),
-                'quantity': parseFloat($('#item_quantity_'+i).val()),
+                'discount': discount_percent,
+                'quantity': quantity,
                 'price': price.toFixed(2),
                 'total': parseFloat($('#item_total_'+i).text()),
                 }
@@ -209,7 +222,7 @@ let items_count = parseInt($('#tbody tr').length);
     let summary = $('<input name = "final_summary" type="hidden"></input>');
 
     csrfmiddlewaretoken.val($("input[name='csrfmiddlewaretoken']").val());
-    customer_name.val($('#name').val().toUpperCase());
+    customer_name.val($('#name').val() !== ''? $('#name').val().toUpperCase() : 'CASH');
     customer_address.val($('#address').val().toUpperCase());
     customer_phone.val($('#phone').val());
     item_list.val(JSON.stringify(product_list));
@@ -238,4 +251,24 @@ function updateInvoice(invoice_id) {
     let url = "/sales/update-invoice/";
     let update = true;
     commonStuff(url, update, invoice_id)
+}
+
+function form_validity_check(product, quantity, discount_percent, mrp){
+    if (product === ''){
+        alert('Item name cannot be empty');
+        return false
+    }
+    if (quantity < 1) {
+        alert('Quantity cannot be less than 1');
+        return false
+    }
+    if(isNaN(mrp) || mrp < 1){
+        alert('Mrp cannot be less than 1');
+        return false
+    }
+    if (discount_percent < 0){
+        alert('Discount cannot be less than 1');
+        return false
+    }
+    return true
 }
