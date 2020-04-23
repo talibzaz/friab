@@ -3,7 +3,6 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-from django.views.generic import ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.template.loader import render_to_string
 
@@ -11,27 +10,12 @@ from django.views import View
 
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
-from django.core import serializers
 from django.http import JsonResponse
 from datetime import date, datetime
 import json
 import uuid
 
 from .models import Invoice, Item
-
-
-class AddCustomerDetailsView(TemplateResponseMixin, View):
-    template_name = 'sales/add-customer-details.html'
-
-    def get(self, request):
-        template_values = {
-            'STATIC_URL': settings.STATIC_URL,
-        }
-        return self.render_to_response(template_values)
-
-    def post(self, request):
-        print(self.request.POST)
-        return HttpResponse("Post success!")
 
 
 class ViewCustomerDetails(TemplateResponseMixin, View):

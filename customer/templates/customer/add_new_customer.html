@@ -18,7 +18,7 @@
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-              <form action="{% url 'sales:add-cus-details' %}" method="post" class="form-horizontal">
+              <form action="{% url 'customer:add-customer' %}" method="post" class="form-horizontal">
                 {% csrf_token %}
                 <div class="box-body">
                   <div class="form-group">
@@ -71,7 +71,6 @@
                             <option value="-1">Select category of customer</option>
                             <option value="a">Category A</option>
                             <option value="b">Category B</option>
-                            <option value="c">Category C</option>
                             <option value="general">Category General</option>
                         </select>
                       </div>
