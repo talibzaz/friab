@@ -10,7 +10,7 @@ class Customer(models.Model):
     gstin = models.CharField(max_length=15, null=True)
     primary_num = models.IntegerField(null=True)
     secondary_num = models.IntegerField(null=True)
-    category = models.CharField(max_length=20, choices=cat_choices)
+    category = models.CharField(max_length=10, choices=cat_choices, null=False)
 
     def __str__(self):
         return self.name
