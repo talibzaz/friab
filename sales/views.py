@@ -108,7 +108,6 @@ class CreateInvoiceView(TemplateResponseMixin, View):
 
         prod_obj = []
 
-        print(products)
         for p in products:
             new_item = Item()
             new_item.invoice = invoice
@@ -236,7 +235,6 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         invoice.save()
 
         for p in products:
-            print(products[p]['product'])
             if products[p]['item_id'] != 0:
                 i = Item.objects.get(id=products[p]['item_id'])
                 i.item_name = products[p]['product']
