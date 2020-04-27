@@ -5,8 +5,6 @@ from django.http import HttpResponse
 from django.conf import settings
 
 from .models import Customer
-from .forms.forms import CustomerProfile
-
 
 class AddNewCustomer(TemplateResponseMixin, View):
     template_name = 'customer/add_new_customer.html'
