@@ -112,6 +112,12 @@ function clearRowData(id) {
     calculateSubTotal();
 }
 
+function clearReturnData(id) {
+
+}
+function addOneReturnRow() {
+
+}
 function customerChange() {
     let customer_type = $('#customer_type').val();
     if(customer_type === 'existing') {
@@ -212,6 +218,7 @@ let items_count = parseInt($('#tbody tr').length);
     final_summary['total_amount'] = parseFloat($('#total_amount').text());
     final_summary['current_balance'] = parseFloat($('#current_balance').text());
     final_summary['payment_mode'] = $('#payment_mode').val();
+    final_summary['balance_bill'] = $('#balance_bill').is(":checked")
 
     let form = $('<form action='+ url +' method="POST"></form>');
     let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');
@@ -235,7 +242,6 @@ let items_count = parseInt($('#tbody tr').length);
     form.append(csrfmiddlewaretoken, customer_name);
     form.append(customer_address, customer_phone);
     form.append(item_list, summary);
-
     $('body').append(form);
     form.submit();
 }

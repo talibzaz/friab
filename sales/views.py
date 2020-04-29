@@ -208,6 +208,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         final_summary = json.loads(self.request.POST['final_summary'])
 
         invoice_id = self.request.POST['invoice_id']
+        inv_date = Invoice.objects.get(id=invoice_id)
 
         template_data = {
             'customer_name': self.request.POST['cus_name'],
@@ -216,6 +217,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
             'products': products,
             'final_summary': final_summary,
             'invoice_id': invoice_id,
+            'current_date': inv_date.date.strftime("%d-%B-%y"),
         }
 
         # SAVING DATA TO DB.

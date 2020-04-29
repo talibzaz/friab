@@ -41,8 +41,8 @@ body {
 }
 
 header {
-  padding: 10px 0;
-  margin-bottom: 20px;
+  padding: 10px 0 4px 0;
+  margin-bottom: 15px;
   border-bottom: 1px solid #AAAAAA;
 }
 
@@ -238,7 +238,8 @@ table tfoot tr td:first-child {
         <div>New Sectt. Road Opp Neelam Cinema</div>
         <div>Karan Nagar Srinagar J&K, 190010</div>
         <div>Ph: +91 7006 843 427</div>
-        <div><a href="mailto:metrosrinagar@gmail.com">metrosrinagar@gmail.com</a></div>
+        <div><a href="mailto:metrosrinagar@gmail.com">Email: metrosrinagar@gmail.com</a></div>
+        <div><a>Website: www.metromotors.imfast.io</a></div>
       </div>
       </div>
     </header>
@@ -315,6 +316,18 @@ table tfoot tr td:first-child {
                     <td colspan="2">GRAND TOTAL</td>
                     <td>{{ final_summary.total_amount }}</td>
                   </tr>
+                  {% if final_summary.balance_bill %}
+                  <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">Amount Paid</td>
+                    <td>{{ final_summary.amount_paid }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">Current Bal.</td>
+                    <td>{{ final_summary.current_balance }}</td>
+                  </tr>
+                  {% endif %}
                 </tfoot>
             </table>
         </div>
