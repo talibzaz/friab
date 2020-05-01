@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateResponseMixin
 from django.views import View
-from django.http import HttpResponse
 from django.conf import settings
 
 from .models import Customer
+from helpers.helpers import pg_records
 
 
 class AddNewCustomer(TemplateResponseMixin, View):
@@ -44,6 +44,23 @@ class CustomerList(TemplateResponseMixin, View):
     template_name = 'customer/customer_list.html'
 
     def get(self, request):
-        customers = Customer.objects.all()
-        print(customers)
-        return self.render_to_response({'STATIC_URL': settings.STATIC_URL, 'customers':customers})
+        customers_obj = Customer.objects.order_by("firm_name").all()
+        customers = pg_records(request, customers_obj, 10)
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'customers': customers
+        })
+
+
+class CustomerDetails(TemplateResponseMixin, View):
+    template_name = 'customer/customer_details.html'
+
+    def get(self, request, customer_id):
+        try:
+            customer = Customer.objects.get(id=customer_id)
+        except Customer.DoesNotExist:
+            return render(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'customer': customer
+        })

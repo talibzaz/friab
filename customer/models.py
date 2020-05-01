@@ -8,8 +8,8 @@ class Customer(models.Model):
     firm_name = models.CharField(max_length=255, null=True, blank=True)
     address = models.TextField(blank=True, null=True)
     gstin = models.CharField(max_length=15, null=True, blank=True)
-    primary_num = models.IntegerField(null=True, blank=True)
-    secondary_num = models.IntegerField(null=True,blank=True)
+    primary_num = models.BigIntegerField(null=True, blank=True)
+    secondary_num = models.BigIntegerField(null=True,blank=True)
     category = models.CharField(max_length=10, choices=cat_choices, default='G')
 
     def __str__(self):
