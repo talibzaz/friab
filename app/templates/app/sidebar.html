@@ -50,14 +50,14 @@
     </li>
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dollar"></i> <span>SALES</span>
+        <i class="fa fa-dollar"></i> <span>CUSTOMER</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right"></i>
         </span>
       </a>
       <ul class="treeview-menu">
         <li><a href="{% url 'customer:add-customer' %}"><i class="fa fa-circle-o"></i>Add New Customer</a></li>
-        <li><a href="#"><i class="fa fa-circle-o"></i>Customer Details</a></li>
+        <li><a href="{% url 'customer:customer-list' %}"><i class="fa fa-circle-o"></i>Customer Info</a></li>
         <li><a href="{% url 'sales:order-info' %}"><i class="fa fa-circle-o"></i>Order Info</a></li>
         <li><a href="#"><i class="fa fa-circle-o"></i>Daily Sales</a></li>
       </ul>

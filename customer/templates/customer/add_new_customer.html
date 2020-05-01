@@ -1,5 +1,5 @@
 {% extends 'app/base_site.html' %}
-
+{% load static %}
 {% block content %}
   <div class="content-wrapper">
     <section class="content-header">
@@ -68,10 +68,9 @@
 
                       <div class="col-sm-9">
                         <select name="category" class="form-control">
-                            <option value="-1">Select category of customer</option>
-                            <option value="A">Category A</option>
-                            <option value="B">Category B</option>
-                            <option value="G">Category General</option>
+                            <option value="G">General Category</option>
+                            <option value="A">A Category</option>
+                            <option value="B">B Category</option>
                         </select>
                       </div>
                   </div>
@@ -87,4 +86,5 @@
       </div>
     </section>
   </div>
+    <script src="{% static j %}js/customer.js"></script>
 {% endblock content %}
