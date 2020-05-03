@@ -73,7 +73,7 @@ class EditCustomerDetailsView(TemplateResponseMixin, View):
         try:
             customer = Customer.objects.get(id=customer_id)
         except Customer.DoesNotExist:
-            return request(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
+            return render(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
         return self.render_to_response({
             'STATIC_URL': settings.STATIC_URL,
             'customer': customer
