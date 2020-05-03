@@ -23,9 +23,18 @@
             <tbody>
             {% for customer in customers %}
                 <tr>
-                  <td>{{ customer.firm_name }}</td>
-                  <td>{{ customer.name }}</td>
-                  <td>{{ customer.address }}</td>
+                  <td>{% if customer.firm_name == '' %}Unknown
+                      {% else %} {{ customer.firm_name }}
+                      {% endif %}
+                  </td>
+                  <td>{% if customer.name == '' %}Unknown
+                      {% else %} {{ customer.name }}
+                      {% endif %}
+                  </td>
+                  <td>{% if customer.address == '' %}Unknown
+                      {% else %} {{ customer.address }}
+                      {% endif %}
+                  </td>
                   <td>{% if customer.primary_num == 0 %}Unknown
                       {% else %} {{ customer.primary_num }}
                       {% endif %}

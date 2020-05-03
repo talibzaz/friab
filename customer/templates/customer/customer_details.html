@@ -1,6 +1,59 @@
 {% extends 'app/base_site.html' %}
 {% block content %}
     <div class="content-wrapper">
-
+        <div class="col-md-12">
+            <div class="row">
+                <div class="header" style="margin-left: 15px;">
+                <h3>Customer Details</h3>
+            </div>
+                <div class="">
+                    <section class="content">
+                        <div class="row">
+                        <div class="col-md-7">
+                          <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">{{ customer.firm_name }}</h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                              <table class="table table-bordered">
+                                <tr>
+                                  <th>Name</th>
+                                  <td class="text-center">{{ customer.name }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Firm Name</th>
+                                  <td class="text-center">{{ customer.firm_name }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Address</th>
+                                  <td class="text-center">{{ customer.address }}</td>
+                                </tr>
+                                <tr>
+                                  <th>GST No.</th>
+                                  <td class="text-center">{{ customer.gstin }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Primary Number</th>
+                                  <td class="text-center">{{ customer.primary_num }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Secondary Number</th>
+                                  <td class="text-center">{{ customer.secondary_num }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Customer Category</th>
+                                  <td class="text-center">{{ customer.category }}</td>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <a href="edit/" class="btn btn-primary" style="margin-left: 277px; width: 75px">Edit</a>
+                    </section>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

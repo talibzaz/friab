@@ -64,3 +64,17 @@ class CustomerDetails(TemplateResponseMixin, View):
             'STATIC_URL': settings.STATIC_URL,
             'customer': customer
         })
+
+
+class EditCustomerDetailsView(TemplateResponseMixin, View):
+    template_name = "customer/edit_customer.html"
+
+    def get(self, request, customer_id):
+        try:
+            customer = Customer.objects.get(id=customer_id)
+        except Customer.DoesNotExist:
+            return request(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'customer': customer
+        })
