@@ -3,7 +3,7 @@
 }
 
 .align-div-center {
-    position: fixed;
-    top: 10%;
+    position: absolute;
+    top: 15%;
     left: 36%;
 }

@@ -1,4 +1,5 @@
 from django.db import models
+from customer.models import Customer
 
 
 class Invoice(models.Model):

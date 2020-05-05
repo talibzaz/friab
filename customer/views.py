@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic.base import TemplateResponseMixin
 from django.views import View
 from django.conf import settings
+from django.shortcuts import redirect
 
 from .models import Customer
 from helpers.helpers import pg_records
@@ -30,7 +31,7 @@ class AddNewCustomer(TemplateResponseMixin, View):
             name=str(self.request.POST['name']).upper(),
             firm_name=str(self.request.POST['firm_name']).upper(),
             address=str(self.request.POST['address']).upper(),
-            gstin=self.request.POST['gstin'],
+            gstin=str(self.request.POST['gstin']).upper(),
             primary_num=pri_number,
             secondary_num=sec_number,
             category=self.request.POST['category']
@@ -78,3 +79,18 @@ class EditCustomerDetailsView(TemplateResponseMixin, View):
             'STATIC_URL': settings.STATIC_URL,
             'customer': customer
         })
+
+    def post(self, request, customer_id):
+        try:
+            customer = Customer.objects.get(id=customer_id)
+            customer.name = str(self.request.POST['name']).upper()
+            customer.firm_name = str(self.request.POST['firm_name']).upper()
+            customer.address = str(self.request.POST['address']).upper()
+            customer.gstin = str(self.request.POST['gstin']).upper()
+            customer.primary_num = self.request.POST['primary_num']
+            customer.secondary_num = self.request.POST['secondary_num']
+            customer.category = self.request.POST['category']
+            customer.save()
+        except Customer.DoesNotExist:
+            return render(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
+        return redirect('customer:customer-details', customer_id)

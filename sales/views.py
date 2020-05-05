@@ -16,6 +16,7 @@ import json
 import uuid
 
 from .models import Invoice, Item
+from sales.utils.utils import save_pdf
 
 
 class ViewCustomerDetails(TemplateResponseMixin, View):
@@ -76,18 +77,12 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'invoice_id': invoice_id[0],
         }
 
-        # SAVING INVOICE PDF TO DISK
-        path = "sales/pdf/{date}".format(date=today.strftime("%d-%B-%y"))
         html = render_to_string("sales/print-invoice.html", template_data)
 
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if os.path.exists(path):
-            f = open(os.path.join(path, '{name}_{id}.pdf'.format(
-                name=self.request.POST['cus_name'].replace(" ", "_"),
-                id=invoice_id[0]
-            )), 'wb')
-            f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
+        # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
+        # THE INVOICE PDF WILL STILL BE GENERATED.
+        temp_path = "sales/temp_pdf/"
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=today, name=self.request.POST['cus_name'], id=invoice_id[0])
 
         # SAVING DATA TO DB.
         invoice = Invoice(
@@ -120,6 +115,13 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             prod_obj.append(new_item)
 
         Item.objects.bulk_create(prod_obj)
+
+        # SAVING INVOICE PDF TO DISK
+        sales_path = "sales/pdf/"
+        save_pdf(request, html=html, pdf_path=sales_path, today=today, name=self.request.POST['cus_name'], id=invoice_id[0])
+
+        # DELETE FILE IN TEMP FOLDER
+        os.remove(temp_file)
 
         # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")

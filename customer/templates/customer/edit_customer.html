@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
     <div class="content-wrapper">
-        <div class="row">
+    <div class="content" style="height: 577px;">
         <div class="col-md-5 align-div-center">
           <!-- Horizontal Form -->
           <div class="box box-info">
@@ -11,69 +11,68 @@
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form class="form-horizontal">
+            <form action="{% url 'customer:edit-customer' customer.id %}" method="POST" class="form-horizontal">
               <div class="box-body">
+                  {% csrf_token %}
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Name</label>
+                  <label class="col-sm-3 control-label">Name</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.name }}" class="form-control" placeholder="Customer Name">
+                  <div class="col-sm-9">
+                    <input type="text" name="name" value="{{ customer.name }}" class="form-control" placeholder="Customer Name">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Firm Name</label>
+                  <label class="col-sm-3 control-label">Firm Name</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.firm_name }}" class="form-control" placeholder="Firm Name">
+                  <div class="col-sm-9">
+                    <input type="text" name="firm_name" value="{{ customer.firm_name }}" class="form-control" placeholder="Firm Name">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Address</label>
+                  <label class="col-sm-3 control-label">Address</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.address }}" class="form-control" placeholder="Address">
+                  <div class="col-sm-9">
+                    <input type="text" name="address" value="{{ customer.address }}" class="form-control" placeholder="Address">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Address</label>
+                  <label class="col-sm-3 control-label">GST Number</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.address }}" class="form-control" placeholder="Address">
+                  <div class="col-sm-9">
+                    <input type="text" name="gstin" value="{{ customer.gstin }}" class="form-control" placeholder="GST Number">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">GST Number</label>
+                  <label class="col-sm-3 control-label">Primary Number</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.gstin }}" class="form-control" placeholder="GST Number">
+                  <div class="col-sm-9">
+                    <input type="number" name="primary_num" value="{{ customer.primary_num }}" class="form-control" placeholder="Primary Number">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Primary Number</label>
+                  <label class="col-sm-3 control-label">Secondary Number</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.primary_num }}" class="form-control" placeholder="Primary Number">
+                  <div class="col-sm-9">
+                    <input type="number" name="secondary_num" value="{{ customer.secondary_num }}" class="form-control" placeholder="Secondary Number">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">Secondary Number</label>
+                  <label class="col-sm-3 control-label">Category</label>
 
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.secondary_num }}" class="form-control" placeholder="Secondary Number">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-2 control-label">Category</label>
-
-                  <div class="col-sm-10">
-                    <input type="text" value="{{ customer.secondary_num }}" class="form-control" placeholder="Secondary Number">
+                  <div class="col-sm-9">
+                    <select name="category"  class="form-control">
+                        <option value="{{ customer.category }}">{{ customer.category }}</option>
+                        <option value="General Category">General Category</option>
+                        <option value="A Category">A Category</option>
+                        <option value="B Category">B Category</option>
+                    </select>
                   </div>
                 </div>
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-default">Cancel</button>
-                <button type="submit" class="btn btn-info pull-right">Sign in</button>
+                <a href="{% url 'customer:customer-details' customer.id %}" class="btn btn-default" style="margin-left: 176px;">Cancel</a>
+                <button type="submit" class="btn btn-info" style="width: 68px;">Save</button>
               </div>
               <!-- /.box-footer -->
             </form>
