@@ -1,11 +1,19 @@
 // RELOAD PAGE EVERYTIME BACK BUTTON GETS PRESSED ON BROWSER.
 $(document).ready(function () {
+    if($('#retail').is(":checked")){
+        $('.select2-div').hide()
+    } else {
+        $('#name').hide()
+        $('#customer_details').hide()
+    }
     if(!!window.performance && window.performance.navigation.type === 2)
     {
         window.location.reload();
     }
    document.getElementById("name").focus()
-
+   $('#existing_customer').select2({
+        placeholder: "SELECT AN EXISTING CUSTOMER",
+   });
 });
 
 // EVENTS TRIGGERED ON PRESSING ENTER.
@@ -20,6 +28,36 @@ $('body').on('keypress', 'input', function (e) {
        }
     }
 });
+
+// SELECTS TYPE OF CUSTOMER WHETHER RETAIL OR EXISTING..
+$('#retail').click(function () {
+    $(this).prop("checked", true)
+    $('#existing').prop("checked", false)
+    $('#create_new').prop("checked", false)
+    $('#name').show()
+    $('.select2-div').hide()
+    $('#customer_details').show()
+})
+$('#existing').click(function () {
+    $(this).prop("checked", true)
+    $('#retail').prop("checked", false)
+    $('#create_new').prop("checked", false)
+    $('.select2-div').show()
+    $('#name').hide()
+    $('#customer_details').hide()
+})
+$('#create_new').click(function () {
+    $(this).prop("checked", true)
+    $('#existing').prop("checked", false)
+    $('#retail').prop("checked", false)
+    $('#name').show()
+    $('.select2-div').hide()
+    $('#customer_details').show()
+})
+
+function changeExistingCust(sel) {
+    console.log('change existing customer', sel.value)
+}
 
 // THIS FUNCTION CREATES TABLE.
 function generateTable(i){
@@ -118,50 +156,11 @@ function clearReturnData(id) {
 function addOneReturnRow() {
 
 }
-function customerChange() {
-    let customer_type = $('#customer_type').val();
-    if(customer_type === 'existing') {
-        //TODO: MAKE AJAX CALL TO SERVER AND GET LIST OF CUSTOMERS
-        let url = "{% url 'sales:customer-list' %}";
-
-        $.get(url, function (data) {
-            console.log(data)
-        });
-    }
-    if(customer_type === 'retail'){
-        $('#customer_details').empty().append(
-            "<div class='row form-group'>\n" +
-            "                  <label for='name' class='col-sm-2 control-label'>Name</label>\n" +
-            "                  <div class='col-sm-4'>\n" +
-            "                    <input type='text' id='name' class='form-control' placeholder='Name of Customer...'>\n" +
-            "                  </div>\n" +
-            "                  <label for='date' class='col-sm-1 control-label'>Category</label>\n" +
-            "                  <div class='col-sm-2'>\n" +
-            "                    <select id='category' class='form-control input-sm'>\n" +
-            "                       <option value='cat_gen'>General</option> " +
-            "                       <option value='cat_a'>Category A</option> " +
-            "                       <option value='cat_b'>Category B</option> " +
-            "                       <option value='cat_c'>Category C</option> " +
-            "                    </select>\n" +
-            "                  </div>\n" +
-            "              </div>\n" +
-            "              <div class='row form-group'>\n" +
-            "                  <label for='address' class='col-sm-2 control-label'>Address</label>\n" +
-            "                  <div class='col-sm-4'>\n" +
-            "                    <input type='text' id='address' class='form-control' placeholder='Address...'>\n" +
-            "                  </div>\n" +
-            "                  <label for='phone' class='col-sm-1 control-label'>Phone</label>\n" +
-            "                  <div class='col-sm-2'>\n" +
-            "                    <input type='number' id='primary_num' class='form-control' placeholder='Phone Number'>\n" +
-            "                  </div>\n" +
-            "              </div>"
-        )
-    }
-}
 
 //THE COMMON CODE BETWEEN CREATE INVOICE AND UPDATE INVOICE
 function commonStuff(url, update=false, invoice_id=null) {
 let items_count = parseInt($('#tbody tr').length);
+    let customer_info = {};
     let product_list = {};
     let final_summary = {};
     let counter = 0;
@@ -222,33 +221,47 @@ let items_count = parseInt($('#tbody tr').length);
 
     let form = $('<form action='+ url +' method="POST"></form>');
     let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');
-    let customer_name = $('<input name = "cus_name" type="hidden"></input>');
-    let customer_address = $('<input name = "cus_address" type="hidden"></input>');
-    let customer_phone = $('<input name = "cus_phone" type="hidden"></input>');
+
+    let existing_customer = $('#existing').is(':checked');
+    let retail = $('#retail').is(':checked');
+
+    if(existing_customer){
+        customer_info['type'] = 'existing';
+        customer_info['customer_id'] = $('#existing_customer').val();
+    }else {
+        customer_info['type'] = retail? 'retail' : 'create_new';
+        customer_info['name'] = $('#name').val() !== ''? $('#name').val().toUpperCase() : 'CASH';
+        customer_info['address'] = $('#address').val().toUpperCase();
+        customer_info['phone'] = $('#phone').val();
+    }
+
+    let cust_info = $('<input name = "customer_info" type="hidden"></input>')
     let item_list = $('<input name = "product_list" type="hidden"></input>');
     let summary = $('<input name = "final_summary" type="hidden"></input>');
 
     csrfmiddlewaretoken.val($("input[name='csrfmiddlewaretoken']").val());
-    customer_name.val($('#name').val() !== ''? $('#name').val().toUpperCase() : 'CASH');
-    customer_address.val($('#address').val().toUpperCase());
-    customer_phone.val($('#phone').val());
+
+    cust_info.val(JSON.stringify(customer_info));
     item_list.val(JSON.stringify(product_list));
     summary.val(JSON.stringify(final_summary));
+
+    // SENDING INVOICE ID IF INVOICE IS TO BE UPDATED...
     if (update){
         let inv_id = $('<input name = "invoice_id" type="hidden"></input>');
         inv_id.val(invoice_id);
         form.append(inv_id);
     }
-    form.append(csrfmiddlewaretoken, customer_name);
-    form.append(customer_address, customer_phone);
+
+    form.append(csrfmiddlewaretoken, cust_info);
     form.append(item_list, summary);
+
     $('body').append(form);
     form.submit();
 }
 
 // SENDS THE FINAL DATA TO SERVER FOR PDF GENERATION PURPOSE.
 function saveInvoice() {
-    let url = "/sales/billing/sale-bill/";
+    let url = "/sales/invoice/";
     commonStuff(url)
 }
 

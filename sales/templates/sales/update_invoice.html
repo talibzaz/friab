@@ -15,25 +15,53 @@
         <div class="col-xs-12">
           <div class="box box-success">
             <div class="box-header">
+              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Customer Type</h1>
+                <div class="col-sm-6 checkbox">
+                   <label>
+                   <input type="checkbox" id="retail" {% if type == 'retail' %}checked{% endif %} value="retail">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Retail
+                   </label>
+                   <label>
+                   <input type="checkbox" id="existing" {% if type == 'existing' %}checked{% endif %} value="existing">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Existing
+                   </label>
+                   <label>
+                   <input type="checkbox" id="create_new" value="create_new">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Create New
+                   </label>
+                </div>
+            </div>
+            <div class="box-header">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Buyer Name</h1>
                 {% csrf_token %}
                 <div class="col-sm-3">
                     <input type="text" id="name" value="{{ invoice.customer_name }}" class="form-control">
-{#                  <select class="form-control" onchange="customerChange()" id="customer_type">#}
-{#                      <option>Please select a value</option>#}
-{#                      <option value="existing">Existing</option>#}
-{#                      <option value="retail">Retail</option>#}
-{#                  </select>#}
+                    <div class="select2-div">
+                        <select class="form-control" id="existing_customer" onchange="changeExistingCust(this)">
+                        <option value="{{ invoice.customer.id }}">
+                            {{ invoice.customer.firm_name }} --- {{ invoice.customer.name }}, {{ invoice.customer.address }}
+                        </option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">
+                            {{ customer.firm_name }} --- {{ customer.name }}, {{ customer.address }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    </div>
                 </div>
             </div>
+
           <div class="col-xs-12 box-header" id="customer_details">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Address</h1>
               <div class="col-sm-3">
-                <input type="text" class="form-control" value="{{ invoice.customer_address }}" id="address">
+                <input type="text" value="{{ invoice.customer_address }}" class="form-control" id="address">
               </div>
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Phone</h1>
               <div class="col-sm-3">
-                <input type="text" class="form-control" value="{{ invoice.customer_phone }}" id="phone">
+                <input type="text" value="{{ invoice.customer_phone }}" class="form-control" id="phone">
               </div>
           </div>
             <!-- /.box-header -->

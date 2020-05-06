@@ -15,17 +15,43 @@
         <div class="col-xs-12">
           <div class="box box-success">
             <div class="box-header">
+              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Customer Type</h1>
+                <div class="col-sm-6 checkbox">
+                   <label>
+                   <input type="checkbox" id="retail" checked value="retail">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Retail
+                   </label>
+                   <label>
+                   <input type="checkbox" id="existing" value="existing">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Existing
+                   </label>
+                   <label>
+                   <input type="checkbox" id="create_new" value="create_new">
+                   <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                   Create New
+                   </label>
+                </div>
+            </div>
+            <div class="box-header">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Buyer Name</h1>
                 {% csrf_token %}
                 <div class="col-sm-3">
                     <input type="text" id="name" class="form-control">
-{#                  <select class="form-control" onchange="customerChange()" id="customer_type">#}
-{#                      <option>Please select a value</option>#}
-{#                      <option value="existing">Existing</option>#}
-{#                      <option value="retail">Retail</option>#}
-{#                  </select>#}
+                    <div class="select2-div">
+                        <select class="form-control" id="existing_customer" onchange="changeExistingCust(this)">
+                        <option value="" disabled selected>SELECT AN EXISTING CUSTOMER</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">
+                            {{ customer.firm_name }} --- {{ customer.name }}, {{ customer.address }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    </div>
                 </div>
             </div>
+
           <div class="col-xs-12 box-header" id="customer_details">
               <h1 class="box-title col-sm-3" style="margin-top: 7px;">Address</h1>
               <div class="col-sm-3">
@@ -78,44 +104,44 @@
           <!-- /.box -->
         </div>
         <!-- /.col -->
-        <div class="col-xs-12">
-            <div class="box box-success">
-                <div class="box-header">
-                    <h3>Return Items</h3>
-                </div>
-            <div class="box-body">
-                <table class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th class="text-center" style='width:5px;'>#</th>
-                  <th style='width:250px;'>Product</th>
-                  <th style='width:20px;'>MRP</th>
-                  <th style='width:20px;'>Quantity</th>
-                  <th style='width:20px;'>Discount</th>
-                  <th class='text-center' style='width:40px;'>Total</th>
-                  <th class='text-center' style='width:20px;'>#</th>
-                </tr>
-                </thead>
-                <tbody id="body-return">
-                    <tr>
-                        <td id="return_it_1">1</td>
-                        <td><input type="name" class="form-control" id="return_name_1"></td>
-                        <td><input type="number" class="form-control" id="return_mrp"></td>
-                        <td><input type="number" class="form-control" id="return_quantity" value="1"></td>
-                        <td><input type="number" class="form-control" id="return_discount"></td>
-                        <td class='text-center' style='padding-top:15px'><b><span id='return_total_1'></span></b></td>
-                        <td class="text-center">
-                            <a class='btn' id="1" onclick='clearReturnData(this.id)'><i class='fa fa-clear'></i>x</a>
-                        </td>
-                    </tr>
-                </tbody>
-               </table>
-            </div>
-            <div class="text-center" style="margin-top: 5px;">
-                <button class="btn btn-success" onclick="addOneReturnRow()">+</button>
-            </div>
-        </div>
-        </div>
+{#        <div class="col-xs-12">#}
+{#            <div class="box box-success">#}
+{#                <div class="box-header">#}
+{#                    <h3>Return Items</h3>#}
+{#                </div>#}
+{#            <div class="box-body">#}
+{#                <table class="table table-bordered table-striped">#}
+{#                <thead>#}
+{#                <tr>#}
+{#                  <th class="text-center" style='width:5px;'>#</th>#}
+{#                  <th style='width:250px;'>Product</th>#}
+{#                  <th style='width:20px;'>MRP</th>#}
+{#                  <th style='width:20px;'>Quantity</th>#}
+{#                  <th style='width:20px;'>Discount</th>#}
+{#                  <th class='text-center' style='width:40px;'>Total</th>#}
+{#                  <th class='text-center' style='width:20px;'>#</th>#}
+{#                </tr>#}
+{#                </thead>#}
+{#                <tbody id="body-return">#}
+{#                    <tr>#}
+{#                        <td id="return_it_1">1</td>#}
+{#                        <td><input type="name" class="form-control" id="return_name_1"></td>#}
+{#                        <td><input type="number" class="form-control" id="return_mrp"></td>#}
+{#                        <td><input type="number" class="form-control" id="return_quantity" value="1"></td>#}
+{#                        <td><input type="number" class="form-control" id="return_discount"></td>#}
+{#                        <td class='text-center' style='padding-top:15px'><b><span id='return_total_1'></span></b></td>#}
+{#                        <td class="text-center">#}
+{#                            <a class='btn' id="1" onclick='clearReturnData(this.id)'><i class='fa fa-clear'></i>x</a>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                </tbody>#}
+{#               </table>#}
+{#            </div>#}
+{#            <div class="text-center" style="margin-top: 5px;">#}
+{#                <button class="btn btn-success" onclick="addOneReturnRow()">+</button>#}
+{#            </div>#}
+{#        </div>#}
+{#        </div>#}
         <div class="col-md-6 pull-right">
           <div class="box box-success">
             <div class="box-header with-border">

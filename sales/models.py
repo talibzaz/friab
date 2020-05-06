@@ -5,6 +5,7 @@ from customer.models import Customer
 class Invoice(models.Model):
     id = models.CharField(primary_key=True, max_length=8, editable=False)
     customer_name = models.CharField(max_length=20, default='CASH')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True)
     customer_address = models.CharField(max_length=30, blank=True)
     customer_phone = models.CharField(blank=True, max_length=10)
     date = models.DateTimeField()

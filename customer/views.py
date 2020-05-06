@@ -82,13 +82,21 @@ class EditCustomerDetailsView(TemplateResponseMixin, View):
 
     def post(self, request, customer_id):
         try:
+            pri_num = int(self.request.POST['primary_num'])
+        except ValueError:
+            pri_num = 0
+        try:
+           sec_num = int(self.request.POST['secondary_num'])
+        except ValueError:
+            sec_num = 0
+        try:
             customer = Customer.objects.get(id=customer_id)
             customer.name = str(self.request.POST['name']).upper()
             customer.firm_name = str(self.request.POST['firm_name']).upper()
             customer.address = str(self.request.POST['address']).upper()
             customer.gstin = str(self.request.POST['gstin']).upper()
-            customer.primary_num = self.request.POST['primary_num']
-            customer.secondary_num = self.request.POST['secondary_num']
+            customer.primary_num = pri_num
+            customer.secondary_num = sec_num
             customer.category = self.request.POST['category']
             customer.save()
         except Customer.DoesNotExist:

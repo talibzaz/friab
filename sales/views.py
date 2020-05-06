@@ -15,18 +15,9 @@ from datetime import date, datetime
 import json
 import uuid
 
+from customer.models import Customer
 from .models import Invoice, Item
 from sales.utils.utils import save_pdf
-
-
-class ViewCustomerDetails(TemplateResponseMixin, View):
-    template_name = 'sales/customer_details.html'
-
-    def get(self, request):
-        template_values = {
-            'STATIC_URL': settings.STATIC_URL
-        }
-        return self.render_to_response(template_values)
 
 
 class OrderDetailsView(TemplateResponseMixin, View):
@@ -52,11 +43,30 @@ class CreateInvoiceView(TemplateResponseMixin, View):
     def get(self, request):
         template_values = {
             'STATIC_URL': settings.STATIC_URL,
+            'customers': Customer.objects.all(),
             'range': [1, 5, 10, 15, 20, 25, 30],
         }
         return self.render_to_response(template_values)
 
     def post(self, request):
+        customer_info = json.loads(self.request.POST['customer_info'])
+        c_type = customer_info['type']
+
+        if c_type == 'retail' or c_type == 'create_new':
+            customer_name = customer_info['name']
+            address = customer_info['address']
+            phone = customer_info['phone']
+            if c_type == 'create_new':
+                customer = self.create_new_customer(customer_info)
+        elif c_type == 'existing':
+            customer_id = customer_info['customer_id']
+            try:
+                customer = Customer.objects.get(id=customer_id)
+                customer_name = customer.firm_name
+                address = customer.address
+            except Customer.DoesNotExist:
+                customer_name = ''
+                address = ''
 
         products = json.loads(self.request.POST['product_list'])
 
@@ -68,9 +78,8 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         today = date.today()
 
         template_data = {
-            'customer_name': self.request.POST['cus_name'],
-            'customer_address': self.request.POST['cus_address'],
-            'customer_phone': self.request.POST['cus_phone'],
+            'customer_name': customer_name,
+            'customer_address': address,
             'products': products,
             'final_summary': final_summary,
             'current_date': today.strftime("%d-%B-%y"),
@@ -82,24 +91,18 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
         # THE INVOICE PDF WILL STILL BE GENERATED.
         temp_path = "sales/temp_pdf/"
-        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=today, name=self.request.POST['cus_name'], id=invoice_id[0])
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=today, name=customer_name, id=invoice_id[0])
 
         # SAVING DATA TO DB.
-        invoice = Invoice(
-            id=template_data['invoice_id'],
-            customer_name=template_data['customer_name'],
-            customer_address=template_data['customer_address'],
-            customer_phone=template_data['customer_phone'],
-            date=today,
-            sub_total=template_data['final_summary']['sub_total'],
-            last_bal=template_data['final_summary']['last_balance'],
-            p_and_f=template_data['final_summary']['p_and_f'],
-            round_off=template_data['final_summary']['round_off'],
-            total_amount=template_data['final_summary']['total_amount'],
-            amount_paid=template_data['final_summary']['amount_paid'],
-            current_bal=template_data['final_summary']['current_balance'],
-        )
-        invoice.save()
+        if c_type == 'existing' or c_type == 'create_new':
+            obj = {
+                'name': customer.firm_name,
+                'address': customer.address,
+                'phone': customer.primary_num
+            }
+            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, today=today, customer_obj=obj, customer=customer)
+        elif c_type == 'retail':
+            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, today=today, customer_obj=customer_info, customer=None)
 
         prod_obj = []
 
@@ -118,7 +121,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
 
         # SAVING INVOICE PDF TO DISK
         sales_path = "sales/pdf/"
-        save_pdf(request, html=html, pdf_path=sales_path, today=today, name=self.request.POST['cus_name'], id=invoice_id[0])
+        save_pdf(request, html=html, pdf_path=sales_path, today=today, name=customer_name, id=invoice_id[0])
 
         # DELETE FILE IN TEMP FOLDER
         os.remove(temp_file)
@@ -130,6 +133,177 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
 
         return response
+
+    def create_new_customer(self, customer_info):
+        try:
+            pri_num = int(customer_info['phone'])
+        except ValueError:
+            pri_num = 0
+        c = Customer.objects.create(
+            firm_name=customer_info['name'],
+            address=customer_info['address'],
+            primary_num= pri_num,
+            category='General Category'
+        )
+        c.save()
+        return c
+
+    def create_invoice(self, id, data, today, customer_obj, customer):
+        invoice = Invoice.objects.create(
+            id=id,
+            customer_name=customer_obj['name'],
+            customer=customer,
+            customer_address=customer_obj['address'],
+            customer_phone=customer_obj['phone'],
+            date=today,
+            sub_total=data['sub_total'],
+            last_bal=data['last_balance'],
+            p_and_f=data['p_and_f'],
+            round_off=data['round_off'],
+            total_amount=data['total_amount'],
+            amount_paid=data['amount_paid'],
+            current_bal=data['current_balance'],
+        )
+        invoice.save()
+        return invoice
+
+
+class UpdateInvoiceView(TemplateResponseMixin, View):
+    template_name = 'sales/update_invoice.html'
+
+    def get(self, request, invoice_id):
+        invoice = Invoice.objects.get(id=invoice_id)
+        items = Item.objects.filter(invoice_id=invoice_id)
+        template_values = {
+            'STATIC_URL': settings.STATIC_URL,
+            'customers': Customer.objects.all(),
+            'invoice': invoice,
+            'items': items,
+            'range': [1, 5, 10, 15, 20, 25, 30],
+            'type': 'retail' if invoice.customer is None else 'existing'
+        }
+        return self.render_to_response(template_values)
+
+    def post(self, request):
+        customer_info = json.loads(self.request.POST['customer_info'])
+        c_type = customer_info['type']
+
+        if c_type == 'retail' or c_type == 'create_new':
+            customer_name = customer_info['name']
+            address = customer_info['address']
+            phone = customer_info['phone']
+            customer = None
+            if c_type == 'create_new':
+                customer = self.create_new_customer(customer_info)
+        elif c_type == 'existing':
+            customer_id = customer_info['customer_id']
+            try:
+                customer = Customer.objects.get(id=customer_id)
+                customer_name = customer.firm_name
+                address = customer.address
+                phone = customer.primary_num
+            except Customer.DoesNotExist:
+                customer_name = ''
+                address = ''
+
+        products = json.loads(self.request.POST['product_list'])
+
+        final_summary = json.loads(self.request.POST['final_summary'])
+
+        invoice_id = self.request.POST['invoice_id']
+        inv_date = Invoice.objects.get(id=invoice_id)
+
+        template_data = {
+            'customer_name': customer_name,
+            'customer_address': address,
+            'customer_phone': phone,
+            'products': products,
+            'final_summary': final_summary,
+            'invoice_id': invoice_id,
+            'current_date': inv_date.date.strftime("%d-%B-%y"),
+        }
+
+        html = render_to_string("sales/print-invoice.html", template_data)
+
+        invoice = Invoice.objects.get(id=invoice_id)
+
+        # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
+        # THE INVOICE PDF WILL STILL BE GENERATED.
+        temp_path = "sales/temp_pdf/"
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=invoice.date, name=customer_name, id=invoice_id[0])
+
+        # SAVING DATA TO DB.
+
+        invoice.customer_name = template_data['customer_name']
+        invoice.customer = customer
+        invoice.customer_address = template_data['customer_address']
+        invoice.customer_phone = template_data['customer_phone']
+        invoice.sub_total = final_summary['sub_total']
+        invoice.last_bal = final_summary['last_balance']
+        invoice.p_and_f = final_summary['p_and_f']
+        invoice.round_off = final_summary['round_off']
+        invoice.total_amount = final_summary['total_amount']
+        invoice.amount_paid = final_summary['amount_paid']
+        invoice.current_bal = final_summary['current_balance']
+
+        invoice.save()
+
+        for p in products:
+            if products[p]['item_id'] != 0:
+                i = Item.objects.get(id=products[p]['item_id'])
+                i.item_name = products[p]['product']
+                i.item_mrp = products[p]['mrp']
+                i.item_quantity = products[p]['quantity']
+                i.item_discount = products[p]['discount']
+                i.item_sp = products[p]['price']
+                i.item_total = products[p]['total']
+                i.save()
+            else:
+                i = Item(
+                    invoice_id=invoice_id,
+                    item_name=products[p]['product'],
+                    item_quantity=products[p]['quantity'],
+                    item_mrp=products[p]['mrp'],
+                    item_discount=products[p]['discount'],
+                    item_sp=products[p]['price'],
+                    item_total=products[p]['total']
+                )
+                i.save()
+
+        # WRITING CONTENT TO HTML RESPONSE.
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = "inline; filename=file.pdf"
+        font_config = FontConfiguration()
+        HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
+
+        # SAVING INVOICE PDF TO DISK
+        sales_path = "sales/pdf/"
+        save_pdf(request, html=html, pdf_path=sales_path, today=invoice.date, name=customer_name, id=invoice_id[0])
+
+        # DELETE FILE IN TEMP FOLDER
+        os.remove(temp_file)
+
+        # WRITING CONTENT TO HTML RESPONSE.
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = "inline; filename=file.pdf"
+        font_config = FontConfiguration()
+        HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
+
+        return response
+
+    def create_new_customer(self, customer_info):
+        try:
+            pri_num = int(customer_info['phone'])
+        except ValueError:
+            pri_num = 0
+        c = Customer.objects.create(
+            firm_name=customer_info['name'],
+            address=customer_info['address'],
+            primary_num= pri_num,
+            category='General Category'
+        )
+        c.save()
+        return c
 
 
 class SearchInvoiceView(TemplateResponseMixin, View):
@@ -187,98 +361,6 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                     })
                 return JsonResponse(json.dumps(data), safe=False)
             return JsonResponse({'error': 'Try Again!'})
-
-
-class UpdateInvoiceView(TemplateResponseMixin, View):
-    template_name = 'sales/update_invoice.html'
-
-    def get(self, request, invoice_id):
-        invoice = Invoice.objects.get(id=invoice_id)
-        items = Item.objects.filter(invoice_id=invoice_id)
-        template_values = {
-            'STATIC_URL': settings.STATIC_URL,
-            'invoice': invoice,
-            'items': items,
-            'range': [1, 5, 10, 15, 20, 25, 30],
-        }
-        return self.render_to_response(template_values)
-
-    def post(self, request):
-
-        products = json.loads(self.request.POST['product_list'])
-
-        final_summary = json.loads(self.request.POST['final_summary'])
-
-        invoice_id = self.request.POST['invoice_id']
-        inv_date = Invoice.objects.get(id=invoice_id)
-
-        template_data = {
-            'customer_name': self.request.POST['cus_name'],
-            'customer_address': self.request.POST['cus_address'],
-            'customer_phone': self.request.POST['cus_phone'],
-            'products': products,
-            'final_summary': final_summary,
-            'invoice_id': invoice_id,
-            'current_date': inv_date.date.strftime("%d-%B-%y"),
-        }
-
-        # SAVING DATA TO DB.
-        invoice = Invoice.objects.get(id=invoice_id)
-
-        invoice.customer_name = template_data['customer_name']
-        invoice.customer_address = template_data['customer_address']
-        invoice.customer_phone = template_data['customer_phone']
-        invoice.sub_total = template_data['final_summary']['sub_total']
-        invoice.last_bal = template_data['final_summary']['last_balance']
-        invoice.p_and_f = template_data['final_summary']['p_and_f']
-        invoice.round_off = template_data['final_summary']['round_off']
-        invoice.total_amount = template_data['final_summary']['total_amount']
-        invoice.amount_paid = template_data['final_summary']['amount_paid']
-        invoice.current_bal = template_data['final_summary']['current_balance']
-
-        invoice.save()
-
-        for p in products:
-            if products[p]['item_id'] != 0:
-                i = Item.objects.get(id=products[p]['item_id'])
-                i.item_name = products[p]['product']
-                i.item_mrp = products[p]['mrp']
-                i.item_quantity = products[p]['quantity']
-                i.item_discount = products[p]['discount']
-                i.item_sp = products[p]['price']
-                i.item_total = products[p]['total']
-                i.save()
-            else:
-                i = Item(
-                    invoice_id=invoice_id,
-                    item_name=products[p]['product'],
-                    item_quantity=products[p]['quantity'],
-                    item_mrp=products[p]['mrp'],
-                    item_discount=products[p]['discount'],
-                    item_sp=products[p]['price'],
-                    item_total=products[p]['total']
-                )
-                i.save()
-
-        # WRITING CONTENT TO HTML RESPONSE.
-        response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = "inline; filename=file.pdf"
-        html = render_to_string("sales/print-invoice.html", template_data)
-        font_config = FontConfiguration()
-        HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(response, font_config=font_config)
-
-        # SAVING INVOICE PDF TO DISK
-        path = "sales/pdf/{date}".format(date=invoice.date.strftime("%d-%B-%y"))
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if os.path.exists(path):
-            f = open(os.path.join(path, '{name}_{id}.pdf'.format(
-                name=self.request.POST['cus_name'].replace(" ", "_"),
-                id=invoice_id
-            )), 'wb')
-            f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
-
-        return response
 
 
 class TestView(TemplateResponseMixin, View):
