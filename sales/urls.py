@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CreateInvoiceView, OrderDetailsView, \
+from .views import CreateInvoiceView, OrderDetailsView, GetCustomerLastBal, \
             TestView, SearchInvoiceView, UpdateInvoiceView
 
 app_name = 'sales'
@@ -10,6 +10,7 @@ urlpatterns = [
     path('search-invoice/', SearchInvoiceView.as_view(), name='search-invoice'),
     path('update-invoice/', UpdateInvoiceView.as_view(), name='update-invoice'),
     path('update-invoice/<str:invoice_id>/', UpdateInvoiceView.as_view(), name='fetch-invoice'),
+    path('get-last-bal/<int:customer_id>', GetCustomerLastBal.as_view(), name='last-balance'),
     path('test/', TestView.as_view(), name='print-invoice'),
     path('order-info/', OrderDetailsView.as_view(), name='order-info'),
 ]

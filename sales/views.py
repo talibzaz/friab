@@ -11,7 +11,7 @@ from django.views import View
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 from django.http import JsonResponse
-from datetime import date, datetime
+from datetime import datetime
 import json
 import uuid
 
@@ -75,7 +75,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         gen_uuid = uuid.uuid4()
         invoice_id = str(gen_uuid).split("-")
 
-        today = date.today()
+        today = datetime.today()
 
         template_data = {
             'customer_name': customer_name,
@@ -362,6 +362,19 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                 return JsonResponse(json.dumps(data), safe=False)
             return JsonResponse({'error': 'Try Again!'})
 
+
+class GetCustomerLastBal(View):
+    def get(self, request, customer_id):
+        customer = Customer.objects.get(id=customer_id)
+        invoice = Invoice.objects.filter(customer=customer).latest('date')
+        return JsonResponse({'current_bal': invoice.current_bal}, safe=False)
+
+
+class AddRandomBillView(TemplateResponseMixin, View):
+    template_name = ''
+
+    def get(self, request):
+        return HttpResponse('Hi')
 
 class TestView(TemplateResponseMixin, View):
     template_name = 'sales/print-invoice.html'

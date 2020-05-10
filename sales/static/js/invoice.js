@@ -37,6 +37,7 @@ $('#retail').click(function () {
     $('#name').show()
     $('.select2-div').hide()
     $('#customer_details').show()
+    $('#last_balance').prop('disabled', false).val(0)
 })
 $('#existing').click(function () {
     $(this).prop("checked", true)
@@ -53,10 +54,14 @@ $('#create_new').click(function () {
     $('#name').show()
     $('.select2-div').hide()
     $('#customer_details').show()
+    $('#last_balance').prop('disabled', false).val(0)
 })
 
 function changeExistingCust(sel) {
-    console.log('change existing customer', sel.value)
+    url = '/sales/get-last-bal/'+sel.value
+    $.get(url, function (data) {
+        $('#last_balance').prop('disabled', true).val(data.current_bal)
+    })
 }
 
 // THIS FUNCTION CREATES TABLE.
