@@ -1,4 +1,10 @@
 $(document).ready(function () {
+    //RELOAD PAGE IF BACK IS PRESSED
+    if(!!window.performance && window.performance.navigation.type === 2)
+    {
+        window.location.reload();
+    }
+
     $('#existing_customer').select2({
         placeholder: "SELECT AN EXISTING CUSTOMER",
    });
@@ -49,7 +55,7 @@ function saveRandomBill() {
     let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');
     csrfmiddlewaretoken.val($("input[name='csrfmiddlewaretoken']").val());
 
-    let form_customer = $('<input name = "customer" type="hidden"></input>')
+    let form_customer = $('<input name = "customer_id" type="hidden"></input>')
     let form_date = $('<input name = "date" type="hidden"></input>')
     let form_last_bal = $('<input name = "last_balance" type="hidden"></input>')
     let form_sub_total = $('<input name = "sub_total" type="hidden"></input>')
@@ -57,16 +63,25 @@ function saveRandomBill() {
     let form_total_amount = $('<input name = "total_amount" type="hidden"></input>')
     let form_amount_paid = $('<input name = "amount_paid" type="hidden"></input>')
 
-    form_customer.val($('#existing_customer').val())
-    form_date.val($('#date').val())
+    let customer_id = $('#existing_customer').val()
+    let date = $('#date_value').val()
+    let sub_total = parseFloat($('#sub_total').val())
+    let amount_paid = parseFloat($('#amount_paid').val())
+
+    if (!form_validity(customer_id, date, sub_total, amount_paid)) {
+        alert('Please fill the form correctly!')
+        return
+    }
+
+    form_customer.val(customer_id)
+    form_date.val(date)
+    form_sub_total.val(sub_total)
+    form_amount_paid.val(amount_paid)
 
     let last_balance = parseFloat($('#last_balance').text())
-    last_balance = isNaN(last_balance)? 0 : date
+    last_balance = isNaN(last_balance)? 0 : last_balance
     form_last_bal.val(last_balance)
 
-    let sub_total = parseFloat($('#sub_total').val())
-    sub_total = isNaN(sub_total)? 0 : sub_total
-    form_sub_total.val(sub_total)
 
     let p_and_f = parseFloat($('#p_and_f').val())
     p_and_f = isNaN(p_and_f)? 0 : p_and_f
@@ -76,9 +91,6 @@ function saveRandomBill() {
     total_amount = isNaN(total_amount)? 0 : total_amount
     form_total_amount.val(total_amount)
 
-    let amount_paid = parseFloat($('#amount_paid').text())
-    amount_paid = isNaN(amount_paid)? 0 : amount_paid
-    form_amount_paid.val(amount_paid)
 
     form.append(csrfmiddlewaretoken, form_customer, form_date)
     form.append(form_last_bal, form_sub_total, form_p_and_f)
@@ -86,4 +98,19 @@ function saveRandomBill() {
 
     $('body').append(form);
     form.submit();
+}
+
+function form_validity(customer_id, date, sub_total, amount_paid) {
+    if (customer_id === null || isNaN(sub_total) || isNaN(amount_paid)) {
+        return false
+    } else {
+        return true
+    }
+}
+
+function clear_all() {
+    $('#sub_total').val('');
+    $('#p_and_f').val('');
+    $('#amount_paid').val('')
+    calculateTotalAmount()
 }

@@ -1,5 +1,6 @@
 import os
 from django.template.loader import render_to_string
+import uuid
 
 from weasyprint import HTML
 
@@ -17,3 +18,9 @@ def save_pdf(request, html, pdf_path, today, name, id):
         )), 'wb')
         f.write(HTML(string=html, base_url=request.build_absolute_uri()).write_pdf())
     return f.name
+
+
+def generate_unique_id():
+    gen_uuid = uuid.uuid4()
+    id = str(gen_uuid).split("-")
+    return id[0]

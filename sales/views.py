@@ -13,11 +13,10 @@ from weasyprint.fonts import FontConfiguration
 from django.http import JsonResponse
 from datetime import datetime
 import json
-import uuid
 
 from customer.models import Customer
 from .models import Invoice, Item
-from sales.utils.utils import save_pdf
+from sales.utils.utils import save_pdf, generate_unique_id
 
 
 class OrderDetailsView(TemplateResponseMixin, View):
@@ -72,10 +71,8 @@ class CreateInvoiceView(TemplateResponseMixin, View):
 
         final_summary = json.loads(self.request.POST['final_summary'])
 
-        gen_uuid = uuid.uuid4()
-        invoice_id = str(gen_uuid).split("-")
-
         today = datetime.today()
+        uniq_id = generate_unique_id()
 
         template_data = {
             'customer_name': customer_name,
@@ -83,7 +80,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'products': products,
             'final_summary': final_summary,
             'current_date': datetime.strptime(final_summary['date'], '%d/%m/%Y').strftime("%d-%B-%y"),
-            'invoice_id': invoice_id[0],
+            'invoice_id': uniq_id,
         }
 
         html = render_to_string("sales/print-invoice.html", template_data)
@@ -91,7 +88,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
         # THE INVOICE PDF WILL STILL BE GENERATED.
         temp_path = "sales/temp_pdf/"
-        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=today, name=customer_name, id=invoice_id[0])
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=today, name=customer_name, id=uniq_id)
 
         # SAVING DATA TO DB.
         if c_type == 'existing' or c_type == 'create_new':
@@ -100,9 +97,9 @@ class CreateInvoiceView(TemplateResponseMixin, View):
                 'address': customer.address,
                 'phone': customer.primary_num
             }
-            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, customer_obj=obj, customer=customer)
+            invoice = self.create_invoice(id=uniq_id, data=final_summary, customer_obj=obj, customer=customer)
         elif c_type == 'retail':
-            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, customer_obj=customer_info, customer=None)
+            invoice = self.create_invoice(id=uniq_id, data=final_summary, customer_obj=customer_info, customer=None)
 
         prod_obj = []
 
@@ -121,7 +118,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
 
         # SAVING INVOICE PDF TO DISK
         sales_path = "sales/pdf/"
-        save_pdf(request, html=html, pdf_path=sales_path, today=today, name=customer_name, id=invoice_id[0])
+        save_pdf(request, html=html, pdf_path=sales_path, today=today, name=customer_name, id=uniq_id)
 
         # DELETE FILE IN TEMP FOLDER
         os.remove(temp_file)
@@ -384,8 +381,32 @@ class AddRandomBillView(TemplateResponseMixin, View):
         })
 
     def post(self, request):
-        print(self.request.POST)
-        return HttpResponse('Hi')
+        try:
+            customer = Customer.objects.get(id=self.request.POST['customer_id'])
+            amount_paid = self.request.POST['amount_paid']
+            total_amount = self.request.POST['total_amount']
+            Invoice(
+                id=generate_unique_id(),
+                customer_name=customer.firm_name,
+                customer=customer,
+                customer_address=customer.address,
+                customer_phone=customer.primary_num,
+                date=datetime.strptime(self.request.POST['date'], '%d/%m/%Y'),
+                sub_total=self.request.POST['sub_total'],
+                last_bal=self.request.POST['last_balance'],
+                p_and_f=self.request.POST['p_and_f'],
+                amount_paid=amount_paid,
+                total_amount=total_amount,
+                current_bal=int(total_amount) - int(amount_paid)
+            ).save()
+
+        except Customer.DoesNotExist:
+            return render(request, 'app/404.html', {
+                'STATIC_URL': settings.STATIC_URL
+            })
+        return render(request, 'sales/add_random_bill_success.html', {
+            'STATIC_URL': settings.STATIC_URL
+        })
 
 
 class TestView(TemplateResponseMixin, View):
