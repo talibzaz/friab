@@ -35,9 +35,9 @@
                 </div>
             </div>
             <div class="box-header">
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Buyer Name</h1>
+              <h1 class="box-title col-sm-2" style="margin-top: 7px;">Buyer Name</h1>
                 {% csrf_token %}
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <input type="text" id="name" value="{{ invoice.customer_name }}" class="form-control">
                     <div class="select2-div">
                         <select class="form-control" id="existing_customer" onchange="changeExistingCust(this)">
@@ -52,15 +52,19 @@
                     </select>
                     </div>
                 </div>
+                <h1 class="box-title col-sm-2" style="margin-top: 7px;">Date</h1>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="date">
+                </div>
             </div>
 
           <div class="col-xs-12 box-header" id="customer_details">
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Address</h1>
-              <div class="col-sm-3">
+              <h1 class="box-title col-sm-2" style="margin-top: 7px;">Address</h1>
+              <div class="col-sm-4">
                 <input type="text" value="{{ invoice.customer_address }}" class="form-control" id="address">
               </div>
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Phone</h1>
-              <div class="col-sm-3">
+              <h1 class="box-title col-sm-2" style="margin-top: 7px;">Phone</h1>
+              <div class="col-sm-4">
                 <input type="text" value="{{ invoice.customer_phone }}" class="form-control" id="phone">
               </div>
           </div>
@@ -200,5 +204,12 @@
   </div>
     <script src="{{ STATIC_URL }}js/invoice.js"></script>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/invoice.css">
+    <script>
+        $(document).ready(function () {
+            if ($('#existing').is(':checked')){
+                $('#last_balance').prop('disabled', true)
+            }
+        })
+    </script>
 
 {% endblock %}

@@ -82,7 +82,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'customer_address': address,
             'products': products,
             'final_summary': final_summary,
-            'current_date': today.strftime("%d-%B-%y"),
+            'current_date': datetime.strptime(final_summary['date'], '%d/%m/%Y').strftime("%d-%B-%y"),
             'invoice_id': invoice_id[0],
         }
 
@@ -100,9 +100,9 @@ class CreateInvoiceView(TemplateResponseMixin, View):
                 'address': customer.address,
                 'phone': customer.primary_num
             }
-            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, today=today, customer_obj=obj, customer=customer)
+            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, customer_obj=obj, customer=customer)
         elif c_type == 'retail':
-            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, today=today, customer_obj=customer_info, customer=None)
+            invoice = self.create_invoice(id=invoice_id[0], data=final_summary, customer_obj=customer_info, customer=None)
 
         prod_obj = []
 
@@ -148,14 +148,14 @@ class CreateInvoiceView(TemplateResponseMixin, View):
         c.save()
         return c
 
-    def create_invoice(self, id, data, today, customer_obj, customer):
+    def create_invoice(self, id, data, customer_obj, customer):
         invoice = Invoice.objects.create(
             id=id,
             customer_name=customer_obj['name'],
             customer=customer,
             customer_address=customer_obj['address'],
             customer_phone=customer_obj['phone'],
-            date=today,
+            date=datetime.strptime(data['date'], '%d/%m/%Y'),
             sub_total=data['sub_total'],
             last_bal=data['last_balance'],
             p_and_f=data['p_and_f'],
@@ -211,7 +211,8 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         final_summary = json.loads(self.request.POST['final_summary'])
 
         invoice_id = self.request.POST['invoice_id']
-        inv_date = Invoice.objects.get(id=invoice_id)
+
+        invoice = Invoice.objects.get(id=invoice_id)
 
         template_data = {
             'customer_name': customer_name,
@@ -220,22 +221,22 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
             'products': products,
             'final_summary': final_summary,
             'invoice_id': invoice_id,
-            'current_date': inv_date.date.strftime("%d-%B-%y"),
+            # 'current_date': datetime.strptime(final_summary['date'], '%d/%m/%Y').strftime("%d-%B-%y"),
+            'current_date': invoice.date.strftime("%d-%B-%y")
         }
 
         html = render_to_string("sales/print-invoice.html", template_data)
 
-        invoice = Invoice.objects.get(id=invoice_id)
-
         # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
         # THE INVOICE PDF WILL STILL BE GENERATED.
         temp_path = "sales/temp_pdf/"
-        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=invoice.date, name=customer_name, id=invoice_id[0])
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=datetime.today(), name=customer_name, id=invoice_id[0])
 
         # SAVING DATA TO DB.
 
         invoice.customer_name = template_data['customer_name']
         invoice.customer = customer
+        # invoice.date = datetime.strptime(final_summary['date'], '%d/%m/%Y'),
         invoice.customer_address = template_data['customer_address']
         invoice.customer_phone = template_data['customer_phone']
         invoice.sub_total = final_summary['sub_total']
@@ -366,15 +367,26 @@ class SearchInvoiceView(TemplateResponseMixin, View):
 class GetCustomerLastBal(View):
     def get(self, request, customer_id):
         customer = Customer.objects.get(id=customer_id)
-        invoice = Invoice.objects.filter(customer=customer).latest('date')
+        try:
+            invoice = Invoice.objects.filter(customer=customer).latest('created_at')
+        except Invoice.DoesNotExist:
+            return JsonResponse({'current_bal': 0})
         return JsonResponse({'current_bal': invoice.current_bal}, safe=False)
 
 
 class AddRandomBillView(TemplateResponseMixin, View):
-    template_name = ''
+    template_name = 'sales/add_random_bill.html'
 
     def get(self, request):
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'customers': Customer.objects.all()
+        })
+
+    def post(self, request):
+        print(self.request.POST)
         return HttpResponse('Hi')
+
 
 class TestView(TemplateResponseMixin, View):
     template_name = 'sales/print-invoice.html'

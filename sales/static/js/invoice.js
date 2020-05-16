@@ -46,6 +46,7 @@ $('#existing').click(function () {
     $('.select2-div').show()
     $('#name').hide()
     $('#customer_details').hide()
+    $('#last_balance').prop('disabled', true)
 })
 $('#create_new').click(function () {
     $(this).prop("checked", true)
@@ -63,6 +64,21 @@ function changeExistingCust(sel) {
         $('#last_balance').prop('disabled', true).val(data.current_bal)
     })
 }
+
+// DATE RANGE PICKER WIDGET
+$(function() {
+  $('#date').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    locale: {
+        format: 'DD/MM/YYYY'
+    },
+    minYear: 2020,
+    maxYear: parseInt(moment().format('YYYY'),10)
+  }, function(start, end, label) {
+
+  });
+});
 
 // THIS FUNCTION CREATES TABLE.
 function generateTable(i){
@@ -223,6 +239,7 @@ let items_count = parseInt($('#tbody tr').length);
     final_summary['current_balance'] = parseFloat($('#current_balance').text());
     final_summary['payment_mode'] = $('#payment_mode').val();
     final_summary['balance_bill'] = $('#balance_bill').is(":checked")
+    final_summary['date'] = $('#date').val()
 
     let form = $('<form action='+ url +' method="POST"></form>');
     let csrfmiddlewaretoken = $('<input name = "csrfmiddlewaretoken" type="hidden"></input>');

@@ -1,0 +1,83 @@
+{% extends 'app/base_site.html' %}
+{% block content %}
+    <div class="content-wrapper search-body">
+        <div class="heading">
+            <h1 class="text-center">Add Custom Invoice</h1>
+        </div>
+        <div class="search-box">
+            <div class="col-md-6">
+                <label>Select Customer</label>
+                {% csrf_token %}
+                <select class="form-control" id="existing_customer" onchange="changeExistingCust(this)">
+                <option value="" disabled selected>SELECT AN EXISTING CUSTOMER</option>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}">{{ customer.firm_name }} --- {{ customer.name }}, {{ customer.address }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="table-body">
+            <div class="col-md-12">
+                <div class="box-body col-md-6">
+                  <table id="example2" class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                      <th>Date</th>
+                      <td><input type="text" class="form-control date" name="date" id="date_value"></td>
+                    </tr>
+                    <tr>
+                        <th>Last Balance</th>
+                        <td><span id="last_balance"></span></td>
+                    </tr>
+                    <tr>
+                      <th>Sub Total</th>
+                      <td><input type="number" id="sub_total" class="form-control" onkeyup="calculateTotalAmount()"></td>
+                    </tr>
+                    <tr>
+                      <th>P&F</th>
+                      <td><input type="number" id="p_and_f" class="form-control" onkeyup="calculateTotalAmount()"></td>
+                    </tr>
+                    <tr>
+                      <th>Total Amount</th>
+                      <td><span id="total_amount"></span></td>
+                    </tr>
+                      <th>Amount Paid</th>
+                      <td><input type="number" id="amount_paid" class="form-control"></td>
+                    </tr>
+                    </thead>
+                  </table>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="buttons">
+                <a class="btn btn-success" style="margin-left: 187px;">Cancel</a>
+                <a class="btn btn-primary" style="width: 73px; margin-left: 36px;" data-toggle="modal" data-target="#modal-default">Save</a>
+            </div>
+        </div>
+
+        <!-- Modal starts from here!!!!!!!!!!!!!!!!!! -->
+    <div class="modal fade" id="modal-default">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Confirmation Required!</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to add these details to customer records?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="saveRandomBill()" data-dismiss="modal">Yes, Save!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <script src="{{ STATIC_URL }}js/random.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/invoice.css">
+
+{% endblock %}

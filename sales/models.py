@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from customer.models import Customer
 
@@ -8,7 +9,8 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True)
     customer_address = models.CharField(max_length=30, blank=True)
     customer_phone = models.CharField(blank=True, max_length=10)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     sub_total = models.FloatField(null=False)
     last_bal = models.IntegerField(default=0)
     p_and_f = models.FloatField(default=0)

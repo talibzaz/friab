@@ -2,9 +2,8 @@ body  {
     font-family: 'Raleway', sans-serif;
 }
 .search-body {
-    /*background: rgb(2,0,36);*/
-    /*background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(6,78,166,1) 57%, rgba(5,100,180,1) 64%, rgba(5,109,186,1) 67%, rgba(0,212,255,1) 100%);*/
-    background-color: #019EED;
+    background: rgb(55,190,161);
+    background: linear-gradient(90deg, rgba(55,190,161,1) 4%, rgba(49,224,208,1) 48%, rgba(0,158,187,0.5466561624649859) 100%);
 }
 
 .heading {
@@ -65,7 +64,7 @@ body  {
     width: 75%;
 }
 
-/* CODE FOR STYLING CHECKBOXES */
+/* ----------------- CODE FOR STYLING CHECKBOXES --------- */
 .checkbox label:after {
   content: '';
   display: table;
@@ -102,3 +101,4 @@ body  {
 .checkbox label input[type="checkbox"]:checked+.cr>.cr-icon {
   opacity: 1;
 }
+/* ######################################################### */

@@ -35,30 +35,32 @@
                 </div>
             </div>
             <div class="box-header">
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Buyer Name</h1>
+              <h1 class="box-title col-sm-2" style="margin-top: 7px;">Buyer Name</h1>
                 {% csrf_token %}
-                <div class="col-sm-3">
+                <div class="col-sm-5">
                     <input type="text" id="name" class="form-control">
                     <div class="select2-div">
                         <select class="form-control" id="existing_customer" onchange="changeExistingCust(this)">
                         <option value="" disabled selected>SELECT AN EXISTING CUSTOMER</option>
                         {% for customer in customers %}
-                        <option value="{{ customer.id }}">
-                            {{ customer.firm_name }} --- {{ customer.name }}, {{ customer.address }}
-                        </option>
+                        <option value="{{ customer.id }}">{{ customer.firm_name }} --- {{ customer.name }}, {{ customer.address }}</option>
                         {% endfor %}
-                    </select>
+                        </select>
                     </div>
+                </div>
+                <h1 class="box-title col-sm-1" style="margin-top: 7px;">Date</h1>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="date">
                 </div>
             </div>
 
           <div class="col-xs-12 box-header" id="customer_details">
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Address</h1>
-              <div class="col-sm-3">
+              <h1 class="box-title col-sm-2" style="margin-top: 7px;">Address</h1>
+              <div class="col-sm-5">
                 <input type="text" class="form-control" id="address">
               </div>
-              <h1 class="box-title col-sm-3" style="margin-top: 7px;">Phone</h1>
-              <div class="col-sm-3">
+              <h1 class="box-title col-sm-1" style="margin-top: 7px;">Phone</h1>
+              <div class="col-sm-4">
                 <input type="text" class="form-control" id="phone">
               </div>
           </div>
