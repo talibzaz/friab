@@ -20,7 +20,7 @@ class Invoice(models.Model):
     current_bal = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.id
+        return self.customer_name
 
 
 class Item(models.Model):

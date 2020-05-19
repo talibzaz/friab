@@ -5,6 +5,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 from .models import Customer
+from sales.models import Invoice, Item
 from helpers.helpers import pg_records
 
 
@@ -67,6 +68,20 @@ class CustomerDetails(TemplateResponseMixin, View):
         })
 
 
+class CustomerRecords(TemplateResponseMixin, View):
+    template_name = "customer/customer_records.html"
+
+    def get(self, request, customer_id):
+        invoice_obj = Invoice.objects.filter(customer_id=customer_id).order_by('-created_at')
+        invoice = pg_records(request, invoice_obj, 10)
+
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'invoice': invoice,
+            'customer': Customer.objects.get(id=customer_id).firm_name
+        })
+
+
 class EditCustomerDetailsView(TemplateResponseMixin, View):
     template_name = "customer/edit_customer.html"
 
@@ -102,3 +117,16 @@ class EditCustomerDetailsView(TemplateResponseMixin, View):
         except Customer.DoesNotExist:
             return render(request, 'app/404.html', {'STATIC_URL': settings.STATIC_URL})
         return redirect('customer:customer-details', customer_id)
+
+
+class RecordView(TemplateResponseMixin, View):
+    template_name = "customer/invoice_record.html"
+
+    def get(self, request, invoice_id):
+        invoice = Invoice.objects.get(id=invoice_id)
+
+        return self.render_to_response({
+            'STATIC_URL': settings.STATIC_URL,
+            'invoice': invoice,
+            'items': Item.objects.filter(invoice=invoice)
+        })

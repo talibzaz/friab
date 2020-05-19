@@ -227,7 +227,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         # SAVING INVOICE PDF TO TEMP FOLDER SO THAT IF DB QUERY FAILS
         # THE INVOICE PDF WILL STILL BE GENERATED.
         temp_path = "sales/temp_pdf/"
-        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=datetime.today(), name=customer_name, id=invoice_id[0])
+        temp_file = save_pdf(request, html=html, pdf_path=temp_path, today=datetime.today(), name=customer_name, id=invoice_id)
 
         # SAVING DATA TO DB.
 
@@ -276,7 +276,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
 
         # SAVING INVOICE PDF TO DISK
         sales_path = "sales/pdf/"
-        save_pdf(request, html=html, pdf_path=sales_path, today=invoice.date, name=customer_name, id=invoice_id[0])
+        save_pdf(request, html=html, pdf_path=sales_path, today=invoice.date, name=customer_name, id=invoice_id)
 
         # DELETE FILE IN TEMP FOLDER
         os.remove(temp_file)

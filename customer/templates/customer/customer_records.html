@@ -1,0 +1,66 @@
+{% extends 'app/base_site.html' %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12">
+            <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Transaction Details of <span style="margin-left: 4px;">{{ customer }}</span></h3>
+            </div>
+            <div class="box-header">
+                <h1 class="box-title col-sm-2" style="margin-top: 7px;">Buyer Name</h1>
+                <div class="col-sm-4">
+                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.customer_name }}</p>
+                </div>
+                <h1 class="box-title col-sm-1" style="margin-top: 7px;">Date</h1>
+                <div class="col-sm-4">
+                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.date }}</p>
+                </div>
+            </div>
+            <div class="box-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Date</th>
+                  <th class="text-center">Sub Total</th>
+                  <th class="text-center">Invoice Amount</th>
+                  <th class="text-center">Amount Paid</th>
+                  <th class="text-center">Current Balance</th>
+                  <th class="text-center" style="width: 136px;">#</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in invoice %}
+                    <tr>
+                      <td>{{ i.date }}</td>
+                      <td>{{ i.sub_total }}</td>
+                      <td class="text-center">{{ i.total_amount }}</td>
+                      <td class="text-center">{{ i.amount_paid }}</td>
+                      <td class="text-center">{{ i.current_bal }}</td>
+                      <td class="text-center"><a href="{% url 'customer:record-view' i.id %}" class="button btn btn-success">View</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="box-footer">
+                <h4>
+                {% if invoice.has_previous %}
+                    <a href="?page={{ invoice.previous_page_number }}">< Prev</a> |
+                {% endif %}
+
+                {% if invoice.has_next %}
+                    <a href="?page={{ invoice.next_page_number }}">Next ></a>
+                {% endif %}
+
+                <span>Page {{ invoice.number }} of {{ invoice.paginator.num_pages }}</span>
+                </h4>
+            </div>
+            </div>
+
+            </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

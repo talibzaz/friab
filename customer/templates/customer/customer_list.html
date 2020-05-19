@@ -14,10 +14,10 @@
             <thead>
             <tr>
               <th>Firm Name</th>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone Number</th>
-              <th class="text-center">#</th>
+              <th class="text-center">Name</th>
+              <th class="text-center">Address</th>
+              <th class="text-center">Phone Number</th>
+              <th class="text-center" style="width: 136px;">#</th>
             </tr>
             </thead>
             <tbody>
@@ -27,19 +27,19 @@
                       {% else %} {{ customer.firm_name }}
                       {% endif %}
                   </td>
-                  <td>{% if customer.name == '' %}Unknown
+                  <td class="text-center">{% if customer.name == '' %}Unknown
                       {% else %} {{ customer.name }}
                       {% endif %}
                   </td>
-                  <td>{% if customer.address == '' %}Unknown
+                  <td class="text-center">{% if customer.address == '' %}Unknown
                       {% else %} {{ customer.address }}
                       {% endif %}
                   </td>
-                  <td>{% if customer.primary_num == 0 %}Unknown
+                  <td class="text-center">{% if customer.primary_num == 0 %}Unknown
                       {% else %} {{ customer.primary_num }}
                       {% endif %}
                   </td>
-                  <td class="text-center"><a href="{{ customer.id }}" class="button btn btn-primary">View</a></td>
+                  <td class="text-right"><a href="{% url 'customer:customer-details' customer.id %}" class="button btn btn-success">Info</a> / <a href="{% url 'customer:customer-records' customer.id %}" class="button btn btn-primary">View</a></td>
                 </tr>
             {% endfor %}
             </tbody>
