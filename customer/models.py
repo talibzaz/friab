@@ -10,6 +10,7 @@ class Customer(models.Model):
     primary_num = models.BigIntegerField(null=True, blank=True)
     secondary_num = models.BigIntegerField(null=True,blank=True)
     category = models.CharField(max_length=16, default='Category General')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

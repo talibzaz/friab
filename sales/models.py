@@ -14,7 +14,7 @@ class Invoice(models.Model):
     sub_total = models.FloatField(null=False)
     last_bal = models.IntegerField(default=0)
     p_and_f = models.FloatField(default=0)
-    round_off = models.FloatField(default=0.0)
+    round_off = models.FloatField(default=0)
     total_amount = models.FloatField()
     amount_paid = models.IntegerField(default=0)
     current_bal = models.IntegerField(default=0)

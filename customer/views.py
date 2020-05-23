@@ -3,10 +3,12 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views import View
 from django.conf import settings
 from django.shortcuts import redirect
+from django.db.models import Sum
 
 from .models import Customer
 from sales.models import Invoice, Item
 from helpers.helpers import pg_records
+import locale
 
 
 class AddNewCustomer(TemplateResponseMixin, View):
@@ -74,11 +76,21 @@ class CustomerRecords(TemplateResponseMixin, View):
     def get(self, request, customer_id):
         invoice_obj = Invoice.objects.filter(customer_id=customer_id).order_by('-created_at')
         invoice = pg_records(request, invoice_obj, 10)
+        locale.setlocale(locale.LC_MONETARY, 'en_IN')
+
+        customer = Customer.objects.get(id=customer_id)
+        total_sale = invoice_obj.aggregate(Sum('total_amount'))['total_amount__sum']
+        latest_record = invoice_obj.latest('created_at')
+        visits = invoice_obj.count()
 
         return self.render_to_response({
             'STATIC_URL': settings.STATIC_URL,
             'invoice': invoice,
-            'customer': Customer.objects.get(id=customer_id).firm_name
+            'customer': Customer.objects.get(id=customer_id).firm_name,
+            'total_sale': locale.currency(total_sale, grouping=True),
+            'current_balance': locale.currency(latest_record.current_bal, grouping=True),
+            'joined': customer.created_at,
+            'visits': visits,
         })
 
 
@@ -128,5 +140,5 @@ class RecordView(TemplateResponseMixin, View):
         return self.render_to_response({
             'STATIC_URL': settings.STATIC_URL,
             'invoice': invoice,
-            'items': Item.objects.filter(invoice=invoice)
+            'items': Item.objects.filter(invoice=invoice),
         })

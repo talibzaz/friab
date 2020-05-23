@@ -19,7 +19,7 @@
                 </div>
                 <h1 class="box-title col-sm-1" style="margin-top: 7px;">Date</h1>
                 <div class="col-sm-4">
-                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.date }}</p>
+                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.date|date:"d-M-yy" }}</p>
                 </div>
             </div>
 
@@ -49,7 +49,7 @@
                 <tbody>
                 {% for i in items %}
                     <tr>
-                        <td></td>
+                        <td class="text-center">{{ forloop.counter }}</td>
                         <td>{{ i.item_name}} <span style="margin-left: 9px;">{{i.item_mrp}}/=</span></td>
                         <td>{{ i.item_sp }}</td>
                         <td>{{ i.item_quantity }}</td>

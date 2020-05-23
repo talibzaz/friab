@@ -1,4 +1,5 @@
 {% extends 'app/base_site.html' %}
+{% load humanize %}
 
 {% block content %}
     <div class="content-wrapper">
@@ -8,16 +9,66 @@
             <div class="box-header">
                 <h3 class="box-title">Transaction Details of <span style="margin-left: 4px;">{{ customer }}</span></h3>
             </div>
-            <div class="box-header">
-                <h1 class="box-title col-sm-2" style="margin-top: 7px;">Buyer Name</h1>
-                <div class="col-sm-4">
-                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.customer_name }}</p>
+                <div class="content-header">
+                    <div class="row">
+                        <div class="col-lg-3 col-xs-6">
+                          <!-- small box -->
+                          <div class="small-box bg-aqua">
+                            <div class="inner">
+                              <h3>{{ total_sale }}</h3>
+
+                              <p>Total Sale</p>
+                            </div>
+                            <div class="icon">
+                              <i class="ion ion-social-usd"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-xs-6">
+                          <!-- small box -->
+                          <div class="small-box bg-green">
+                            <div class="inner">
+                              <h3>{{joined|date:'M-yy'}}</h3>
+
+                              <p>Journey Joined</p>
+                            </div>
+                            <div class="icon">
+                              <i class="ion ion-ios-calendar"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-xs-6">
+                          <!-- small box -->
+                          <div class="small-box bg-yellow">
+                            <div class="inner">
+                              <h3>{{ current_balance }}</h3>
+
+                              <p>Current Balance</p>
+                            </div>
+                            <div class="icon">
+                              <i class="ion ion-cash"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- ./col -->
+                        <div class="col-lg-3 col-xs-6">
+                          <!-- small box -->
+                          <div class="small-box bg-red">
+                            <div class="inner">
+                              <h3>{{ visits }}</h3>
+
+                              <p>Total Visits</p>
+                            </div>
+                            <div class="icon">
+                              <i class="ion ion-android-walk"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- ./col -->
+                      </div>
                 </div>
-                <h1 class="box-title col-sm-1" style="margin-top: 7px;">Date</h1>
-                <div class="col-sm-4">
-                    <p class="header" style="margin-top: 7px; font-weight: bold">{{ invoice.date }}</p>
-                </div>
-            </div>
             <div class="box-body">
               <table id="example2" class="table table-bordered table-hover">
                 <thead>
@@ -33,11 +84,11 @@
                 <tbody>
                 {% for i in invoice %}
                     <tr>
-                      <td>{{ i.date }}</td>
-                      <td>{{ i.sub_total }}</td>
-                      <td class="text-center">{{ i.total_amount }}</td>
-                      <td class="text-center">{{ i.amount_paid }}</td>
-                      <td class="text-center">{{ i.current_bal }}</td>
+                      <td>{{ i.date|date:"d-M-yy" }}</td>
+                      <td class="text-center">{{ i.sub_total|intcomma }}</td>
+                      <td class="text-center">{{ i.total_amount|intcomma }}</td>
+                      <td class="text-center">{{ i.amount_paid|intcomma }}</td>
+                      <td class="text-center">{{ i.current_bal|intcomma }} {% if i.current_bal < 0 %}(CR.){% else %}(DR.){% endif %}</td>
                       <td class="text-center"><a href="{% url 'customer:record-view' i.id %}" class="button btn btn-success">View</a></td>
                     </tr>
                 {% endfor %}
