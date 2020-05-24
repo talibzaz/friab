@@ -106,6 +106,10 @@
           </div>
         </div>
     </div>
+        <div class="text-center">
+            <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-primary">Go Back</a>
+            <a href="{% url 'sales:fetch-invoice' invoice.id %}" class="btn btn-success" style="width: 79px; margin-left: 20px;">Edit</a>
+        </div>
     </section>
   </div>
 {% endblock %}

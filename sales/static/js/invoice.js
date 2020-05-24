@@ -179,7 +179,7 @@ function addOneReturnRow() {
 }
 
 //THE COMMON CODE BETWEEN CREATE INVOICE AND UPDATE INVOICE
-function commonStuff(url, update=false, invoice_id=null) {
+function commonStuff(url, further,  update=false, invoice_id=null) {
 let items_count = parseInt($('#tbody tr').length);
     let customer_info = {};
     let product_list = {};
@@ -260,12 +260,14 @@ let items_count = parseInt($('#tbody tr').length);
     let cust_info = $('<input name = "customer_info" type="hidden"></input>')
     let item_list = $('<input name = "product_list" type="hidden"></input>');
     let summary = $('<input name = "final_summary" type="hidden"></input>');
+    let printing = $('<input name = "printing" type="hidden"></input>');
 
     csrfmiddlewaretoken.val($("input[name='csrfmiddlewaretoken']").val());
 
     cust_info.val(JSON.stringify(customer_info));
     item_list.val(JSON.stringify(product_list));
     summary.val(JSON.stringify(final_summary));
+    printing.val(further)
 
     // SENDING INVOICE ID IF INVOICE IS TO BE UPDATED...
     if (update){
@@ -275,23 +277,23 @@ let items_count = parseInt($('#tbody tr').length);
     }
 
     form.append(csrfmiddlewaretoken, cust_info);
-    form.append(item_list, summary);
+    form.append(item_list, summary, printing);
 
     $('body').append(form);
     form.submit();
 }
 
 // SENDS THE FINAL DATA TO SERVER FOR PDF GENERATION PURPOSE.
-function saveInvoice() {
+function saveInvoice(further) {
     let url = "/sales/invoice/";
-    commonStuff(url)
+    commonStuff(url, further=further)
 }
 
 // UPDATES THE INVOICE IN DB.
-function updateInvoice(invoice_id) {
+function updateInvoice(invoice_id, further) {
     let url = "/sales/update-invoice/";
     let update = true;
-    commonStuff(url, update, invoice_id)
+    commonStuff(url, further=further, update=update, invoice_id=invoice_id)
 }
 
 function form_validity_check(product, quantity, discount_percent, mrp){

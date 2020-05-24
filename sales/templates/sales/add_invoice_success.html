@@ -1,0 +1,17 @@
+{% extends 'app/base_site.html' %}
+{% load static %}
+{% block content %}
+<div class="content-wrapper">
+<div class="row">
+    <div class="col-md-10 text-center center-div">
+        <div class="callout callout-success">
+        <h4>Success!</h4>
+
+        <p>Invoice saved..</p>
+            <a href="{% url 'sales:invoice' %}">Click to add more invoices.</a>
+    </div>
+    </div>
+</div>
+</div>
+    <link rel="stylesheet" href="{% static css %}css/customer.css">
+{% endblock %}

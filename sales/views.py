@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.views.generic.base import TemplateResponseMixin
 from django.template.loader import render_to_string
+from django.shortcuts import redirect
 
 from django.views import View
 
@@ -122,6 +123,11 @@ class CreateInvoiceView(TemplateResponseMixin, View):
 
         # DELETE FILE IN TEMP FOLDER
         os.remove(temp_file)
+
+        if self.request.POST['printing'] == 'save_only':
+            return render(request, 'sales/add_invoice_success.html', {
+                'STATIC_URL': settings.STATIC_URL
+            })
 
         # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")
@@ -280,6 +286,9 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
 
         # DELETE FILE IN TEMP FOLDER
         os.remove(temp_file)
+
+        if self.request.POST['printing'] == 'save_only':
+            return redirect('customer:record-view', invoice_id=invoice_id)
 
         # WRITING CONTENT TO HTML RESPONSE.
         response = HttpResponse(content_type="application/pdf")

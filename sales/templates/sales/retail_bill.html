@@ -187,7 +187,7 @@
     </div>
       <!-- /.row -->
     <div class="col text-center">
-        <button type="button" id="save" class="btn btn-primary" data-toggle="modal" data-target="#modal-default" style="width: 100px;">Save & Print</button>
+        <button type="button" id="save" class="btn btn-primary" data-toggle="modal" data-target="#modal-default" style="width: 100px;"><i class="fa fa-print"></i> Print</button>
     </div>
 
     <!-- Modal starts from here!!!!!!!!!!!!!!!!!! -->
@@ -213,8 +213,8 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="saveInvoice()" data-dismiss="modal">Yes! Save changes</button>
-            <a href="print-invoice.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
+            <button type="button" class="btn btn-primary" onclick="saveInvoice('print')" data-dismiss="modal"><i class="fa fa-print"></i>Save & Print</button>
+            <button type="button" class="btn btn-primary" onclick="saveInvoice('save_only')" data-dismiss="modal">Save Only!</button>
           </div>
         </div>
       </div>
