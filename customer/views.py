@@ -4,6 +4,7 @@ from django.views import View
 from django.conf import settings
 from django.shortcuts import redirect
 from django.db.models import Sum
+from django.db.models import F
 
 from .models import Customer
 from sales.models import Invoice, Item
@@ -74,19 +75,34 @@ class CustomerRecords(TemplateResponseMixin, View):
     template_name = "customer/customer_records.html"
 
     def get(self, request, customer_id):
+        customer = Customer.objects.get(id=customer_id)
+
         invoice_obj = Invoice.objects.filter(customer_id=customer_id).order_by('-created_at')
+
+        if not invoice_obj:
+            invoice = pg_records(request, invoice_obj, 1)
+            return self.render_to_response({
+                'STATIC_URL': settings.STATIC_URL,
+                'invoice': invoice,
+                'customer': customer.firm_name,
+                'total_sale': 0,
+                'current_balance': 0,
+                'joined': customer.created_at,
+                'visits': 0,
+            })
+
         invoice = pg_records(request, invoice_obj, 10)
         locale.setlocale(locale.LC_MONETARY, 'en_IN')
 
-        customer = Customer.objects.get(id=customer_id)
-        total_sale = invoice_obj.aggregate(Sum('total_amount'))['total_amount__sum']
+        total_sale = invoice_obj.exclude(sub_total=0)\
+            .aggregate(total=Sum(F('sub_total') + F('p_and_f') + F('round_off')))['total']
         latest_record = invoice_obj.latest('created_at')
-        visits = invoice_obj.count()
+        visits = invoice_obj.exclude(sub_total=0).count()
 
         return self.render_to_response({
             'STATIC_URL': settings.STATIC_URL,
             'invoice': invoice,
-            'customer': Customer.objects.get(id=customer_id).firm_name,
+            'customer': customer.firm_name,
             'total_sale': locale.currency(total_sale, grouping=True),
             'current_balance': locale.currency(latest_record.current_bal, grouping=True),
             'joined': customer.created_at,
