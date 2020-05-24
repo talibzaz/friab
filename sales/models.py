@@ -12,12 +12,12 @@ class Invoice(models.Model):
     date = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     sub_total = models.FloatField(null=False)
-    last_bal = models.IntegerField(default=0)
+    last_bal = models.FloatField(default=0)
     p_and_f = models.FloatField(default=0)
     round_off = models.FloatField(default=0)
     total_amount = models.FloatField()
-    amount_paid = models.IntegerField(default=0)
-    current_bal = models.IntegerField(default=0)
+    amount_paid = models.FloatField(default=0)
+    current_bal = models.FloatField(default=0)
 
     def __str__(self):
         return self.customer_name

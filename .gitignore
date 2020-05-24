@@ -2,6 +2,10 @@
 venv/
 sales/pdf/
 sales/temp_pdf/
+sales/migrations/*
+!sales/migrations/__init__.py
+customer/migrations/*
+!customer/migrations/__init__.py
 # Django #
 *.log
 *.pot
