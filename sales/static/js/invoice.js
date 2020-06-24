@@ -239,6 +239,7 @@ let items_count = parseInt($('#tbody tr').length);
     final_summary['current_balance'] = parseFloat($('#current_balance').text());
     final_summary['payment_mode'] = $('#payment_mode').val();
     final_summary['balance_bill'] = $('#balance_bill').is(":checked")
+    final_summary['mrp_defined'] = $('#mrp_defined').is(":checked")
     final_summary['date'] = $('#date').val()
 
     let form = $('<form action='+ url +' method="POST"></form>');
