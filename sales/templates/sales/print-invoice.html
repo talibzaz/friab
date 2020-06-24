@@ -269,7 +269,7 @@ table tfoot tr td:first-child {
           {% for key, product in products.items %}
               <tr>
                 <td class="no">{{ product.serial }}</td>
-                <td class="desc">{{ product.product }}</td>
+                <td class="desc">{{ product.product }} {% if final_summary.mrp_defined %} {{product.mrp}}/= {% endif %}</td>
                 <td class="unit">{{ product.price }}</td>
                 <td class="qty">{{ product.quantity }}</td>
                 <td class="total">{{ product.total }}</td>
