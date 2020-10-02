@@ -6,6 +6,7 @@ from django.conf import settings
 from django.views.generic.base import TemplateResponseMixin
 from django.template.loader import render_to_string
 from django.shortcuts import redirect
+from django.db.models import Q
 
 from django.views import View
 
@@ -339,7 +340,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
             except Invoice.DoesNotExist:
                 return JsonResponse({'error': 'ID does not exist'})
         if criteria == 'name':
-            invoice = Invoice.objects.filter(customer_name__icontains=self.request.POST['value']).all()
+            invoice = Invoice.objects.filter(Q(customer_name__icontains=self.request.POST['value']) | Q(customer__name__icontains=self.request.POST['value'])).all().order_by('-created_at')
             if invoice.exists():
                 data = []
                 for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):
@@ -356,7 +357,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
             date_str = self.request.POST['value']
             date_obj = datetime.strptime(date_str, '%d/%m/%Y').date()
 
-            invoice = Invoice.objects.filter(date=date_obj).all()
+            invoice = Invoice.objects.filter(date=date_obj).all().order_by('customer_name')
             if invoice.exists():
                 data = []
                 for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):

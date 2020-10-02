@@ -310,9 +310,5 @@ function form_validity_check(product, quantity, discount_percent, mrp){
         alert('Mrp cannot be Nan');
         return false
     }
-    if (discount_percent < 0){
-        alert('Discount cannot be less than 1');
-        return false
-    }
     return true
 }
