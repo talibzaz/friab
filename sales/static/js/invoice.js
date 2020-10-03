@@ -169,6 +169,17 @@ function clearRowData(id) {
     $('#item_total_'+id).text('');
     $('#round_off').val(0);
     calculateSubTotal();
+    let pathname = window.location.pathname;
+    let res = pathname.split("/")
+    let item_id = $('#item_id_'+id).val()
+    if(item_id != undefined) {
+        $.post('/sales/delete-item/', {
+        'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
+        'invoice_id': res[res.length - 2],
+        'item_id': item_id,
+        }, function (data) {
+        });
+    }
 }
 
 function clearReturnData(id) {

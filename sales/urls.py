@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import CreateInvoiceView, OrderDetailsView, GetCustomerLastBal, \
-            TestView, SearchInvoiceView, UpdateInvoiceView, AddRandomBillView
+            TestView, SearchInvoiceView, UpdateInvoiceView, AddRandomBillView, \
+            DeleteInvoiceItem
 
 app_name = 'sales'
 
@@ -14,5 +15,6 @@ urlpatterns = [
     path('random-bill/', AddRandomBillView.as_view(), name='random-bill'),
     path('test/', TestView.as_view(), name='print-invoice'),
     path('order-info/', OrderDetailsView.as_view(), name='order-info'),
+    path('delete-item/', DeleteInvoiceItem, name='delete-item')
 ]
 

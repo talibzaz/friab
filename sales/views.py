@@ -419,6 +419,12 @@ class AddRandomBillView(TemplateResponseMixin, View):
         })
 
 
+def DeleteInvoiceItem(request):
+    inst = Item.objects.filter(Q(invoice__id=request.POST['invoice_id']) & Q(id=request.POST['item_id']))
+    inst.delete()
+    return JsonResponse({'data': 'ok'}, status=200)
+
+
 class TestView(TemplateResponseMixin, View):
     template_name = 'sales/print-invoice.html'
 
