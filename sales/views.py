@@ -220,6 +220,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         invoice = Invoice.objects.get(id=invoice_id)
 
         template_data = {
+            'client': customer_name,
             'customer_name': customer_name,
             'customer_address': address,
             'customer_phone': phone,

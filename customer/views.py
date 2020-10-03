@@ -155,6 +155,7 @@ class RecordView(TemplateResponseMixin, View):
 
         return self.render_to_response({
             'STATIC_URL': settings.STATIC_URL,
+            'client': invoice.customer_name,
             'invoice': invoice,
             'items': Item.objects.filter(invoice=invoice),
         })

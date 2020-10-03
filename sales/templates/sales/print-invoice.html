@@ -3,7 +3,7 @@
 {% load static %}
   <head>
     <meta charset="utf-8">
-    <title>Invoice Metro</title>
+    <title>{{ client | default:"Print Invoice"}}</title>
     <style>
         @page  {
             size: A4;
