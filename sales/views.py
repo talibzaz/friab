@@ -180,6 +180,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         items = Item.objects.filter(invoice_id=invoice_id)
         template_values = {
             'STATIC_URL': settings.STATIC_URL,
+            'client': invoice.customer_name,
             'customers': Customer.objects.all(),
             'invoice': invoice,
             'items': items,
@@ -420,8 +421,13 @@ class AddRandomBillView(TemplateResponseMixin, View):
 
 
 def DeleteInvoiceItem(request):
-    inst = Item.objects.filter(Q(invoice__id=request.POST['invoice_id']) & Q(id=request.POST['item_id']))
-    inst.delete()
+    invoice_inst = Invoice.objects.get(id=request.POST['invoice_id'])
+    invoice_inst.sub_total = request.POST['sub_total']
+    invoice_inst.total_amount = request.POST['total_amount']
+    invoice_inst.current_bal = request.POST['current_balance']
+    invoice_inst.save()
+    item_inst = Item.objects.filter(Q(invoice__id=request.POST['invoice_id']) & Q(id=request.POST['item_id']))
+    item_inst.delete()
     return JsonResponse({'data': 'ok'}, status=200)
 
 

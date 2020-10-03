@@ -174,10 +174,15 @@ function clearRowData(id) {
     let item_id = $('#item_id_'+id).val()
     if(item_id != undefined) {
         $.post('/sales/delete-item/', {
-        'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        'invoice_id': res[res.length - 2],
-        'item_id': item_id,
+            'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
+            'invoice_id': res[res.length - 2],
+            'item_id': item_id,
+            'sub_total': parseFloat($('#sub_total').text()),
+            'total_amount': parseFloat($('#total_amount').text()),
+            'current_balance': parseFloat($('#current_balance').text()),
         }, function (data) {
+            console.log(data)
+            $('#tr_item_'+id).hide()
         });
     }
 }
