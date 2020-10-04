@@ -335,7 +335,8 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                     'customer_name': invoice.customer_name,
                     'id': invoice.id,
                     'date': invoice.date.strftime('%d-%B-%y'),
-                    'total_amount': invoice.total_amount
+                    'total_amount': invoice.total_amount,
+                    'current_bal': invoice.current_bal
                 }]
                 # data = serializers.serialize('json', invoice)
                 return JsonResponse(json.dumps(data), safe=False)
@@ -350,7 +351,8 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                         'customer_name': i.customer_name,
                         'id': i.id,
                         'date': i.date.strftime('%d-%B-%y'),
-                        'total_amount': i.total_amount
+                        'total_amount': i.total_amount,
+                        'current_bal': i.current_bal
                     })
                 return JsonResponse(json.dumps(data), safe=False)
             return JsonResponse({'error': 'Try Again!'})
@@ -367,7 +369,8 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                         'customer_name': i.customer_name,
                         'id': i.id,
                         'date': i.date.strftime('%d-%B-%y'),
-                        'total_amount': i.total_amount
+                        'total_amount': i.total_amount,
+                        'current_bal': i.current_bal
                     })
                 return JsonResponse(json.dumps(data), safe=False)
             return JsonResponse({'error': 'Try Again!'})

@@ -62,9 +62,9 @@ function getInvoiceData() {
         let json = JSON.parse(data);
         for (i in json){
             $('#tbody').append("<tr>\n" +
-                "                  <td>"+json[i].customer_name+"</td>\n" +
-                "                  <td>"+json[i].id+"</td>\n" +
                 "                  <td>"+json[i].date+"</td>\n" +
+                "                  <td>"+json[i].customer_name+"</td>\n" +
+                "                  <td>"+json[i].current_bal+"</td>\n" +
                 "                  <td>"+json[i].total_amount+"</td>\n" +
                 "                  <td style='text-align: center'>" +
                 "<a href='/sales/update-invoice/"+ json[i].id +"' class='btn btn-primary btn-get'>Get</a>" +
