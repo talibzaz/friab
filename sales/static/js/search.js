@@ -64,6 +64,7 @@ function getInvoiceData() {
             $('#tbody').append("<tr>\n" +
                 "                  <td>"+json[i].date+"</td>\n" +
                 "                  <td>"+json[i].customer_name+"</td>\n" +
+                "                  <td>"+json[i].amount_paid+"</td>\n" +
                 "                  <td>"+json[i].current_bal+"</td>\n" +
                 "                  <td>"+json[i].total_amount+"</td>\n" +
                 "                  <td style='text-align: center'>" +
