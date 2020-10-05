@@ -334,7 +334,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                 data = [{
                     'customer_name': invoice.customer_name,
                     'id': invoice.id,
-                    'date': invoice.date.strftime('%d-%B-%y'),
+                    'date': invoice.date.strftime('%d-%m-%y'),
                     'total_amount': invoice.total_amount,
                     'current_bal': invoice.current_bal,
                     'amount_paid': invoice.amount_paid
@@ -351,7 +351,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                     data.append({
                         'customer_name': i.customer_name,
                         'id': i.id,
-                        'date': i.date.strftime('%d-%B-%y'),
+                        'date': i.date.strftime('%d-%m-%y'),
                         'total_amount': i.total_amount,
                         'current_bal': i.current_bal,
                         'amount_paid': i.amount_paid
@@ -370,7 +370,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                     data.append({
                         'customer_name': i.customer_name,
                         'id': i.id,
-                        'date': i.date.strftime('%d-%B-%y'),
+                        'date': i.date.strftime('%d-%m-%y'),
                         'total_amount': i.total_amount,
                         'current_bal': i.current_bal,
                         'amount_paid': i.amount_paid
@@ -386,7 +386,9 @@ class GetCustomerLastBal(View):
             invoice = Invoice.objects.filter(customer=customer).latest('created_at')
         except Invoice.DoesNotExist:
             return JsonResponse({'current_bal': 0})
-        return JsonResponse({'current_bal': invoice.current_bal}, safe=False)
+        return JsonResponse({'current_bal': invoice.current_bal,
+                             'customer': invoice.customer_name
+                             }, safe=False)
 
 
 class AddRandomBillView(TemplateResponseMixin, View):

@@ -62,6 +62,7 @@ function changeExistingCust(sel) {
     url = '/sales/get-last-bal/'+sel.value
     $.get(url, function (data) {
         $('#last_balance').prop('disabled', true).val(data.current_bal)
+        document.title = data.customer
     })
 }
 
