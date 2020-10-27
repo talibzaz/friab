@@ -9,7 +9,7 @@ certifi==2018.1.18
 cffi==1.14.0
 chardet==3.0.4
 configobj==5.0.6
-cryptography==2.3
+cryptography==3.2
 cssselect2==0.3.0
 defusedxml==0.6.0
 distlib==0.3.0
