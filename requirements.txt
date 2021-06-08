@@ -30,7 +30,7 @@ lazr.uri==1.0.3
 mysqlclient==1.4.6
 oauth==1.0.1
 pbr==5.4.5
-Pillow==7.1.2
+Pillow==8.2.0
 pycparser==2.20
 Pyphen==0.9.5
 pytz==2019.3
