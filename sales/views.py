@@ -46,6 +46,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'STATIC_URL': settings.STATIC_URL,
             'customers': Customer.objects.all(),
             'range': [1, 5, 10, 15, 20, 25, 30],
+            'title': 'Create Invoice'
         }
         return self.render_to_response(template_values)
 
@@ -83,6 +84,7 @@ class CreateInvoiceView(TemplateResponseMixin, View):
             'final_summary': final_summary,
             'current_date': datetime.strptime(final_summary['date'], '%d/%m/%Y').strftime("%d-%B-%y"),
             'invoice_id': uniq_id,
+            'title': customer_name
         }
 
         html = render_to_string("sales/print-invoice.html", template_data)
@@ -180,7 +182,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         items = Item.objects.filter(invoice_id=invoice_id)
         template_values = {
             'STATIC_URL': settings.STATIC_URL,
-            'client': invoice.customer_name,
+            'title': invoice.customer_name,
             'customers': Customer.objects.all(),
             'invoice': invoice,
             'items': items,
@@ -220,7 +222,7 @@ class UpdateInvoiceView(TemplateResponseMixin, View):
         invoice = Invoice.objects.get(id=invoice_id)
 
         template_data = {
-            'client': customer_name,
+            'title': customer_name,
             'customer_name': customer_name,
             'customer_address': address,
             'customer_phone': phone,
@@ -322,6 +324,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
     def get(self, request):
         template_values = {
             'STATIC_URL': settings.STATIC_URL,
+            'title': 'Search Invoice'
         }
         return self.render_to_response(template_values)
 
@@ -335,7 +338,7 @@ class SearchInvoiceView(TemplateResponseMixin, View):
                     'customer_name': invoice.customer_name,
                     'id': invoice.id,
                     'date': invoice.date.strftime('%d-%m-%y'),
-                    'total_amount': invoice.total_amount,
+                    'total_amount': invoice.sub_total,
                     'current_bal': invoice.current_bal,
                     'amount_paid': invoice.amount_paid
                 }]
@@ -347,12 +350,12 @@ class SearchInvoiceView(TemplateResponseMixin, View):
             invoice = Invoice.objects.filter(Q(customer_name__icontains=self.request.POST['value']) | Q(customer__name__icontains=self.request.POST['value'])).all().order_by('-created_at')
             if invoice.exists():
                 data = []
-                for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):
+                for i in invoice.only('customer_name', 'id', 'date', 'sub_total'):
                     data.append({
                         'customer_name': i.customer_name,
                         'id': i.id,
                         'date': i.date.strftime('%d-%m-%y'),
-                        'total_amount': i.total_amount,
+                        'total_amount': i.sub_total,
                         'current_bal': i.current_bal,
                         'amount_paid': i.amount_paid
                     })
@@ -366,12 +369,12 @@ class SearchInvoiceView(TemplateResponseMixin, View):
             invoice = Invoice.objects.filter(date=date_obj).all().order_by('customer_name')
             if invoice.exists():
                 data = []
-                for i in invoice.only('customer_name', 'id', 'date', 'total_amount'):
+                for i in invoice.only('customer_name', 'id', 'date', 'sub_total'):
                     data.append({
                         'customer_name': i.customer_name,
                         'id': i.id,
                         'date': i.date.strftime('%d-%m-%y'),
-                        'total_amount': i.total_amount,
+                        'total_amount': i.sub_total,
                         'current_bal': i.current_bal,
                         'amount_paid': i.amount_paid
                     })

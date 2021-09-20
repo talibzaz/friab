@@ -3,7 +3,7 @@
 {% load static %}
   <head>
     <meta charset="utf-8">
-    <title>{{ client | default:"Print Invoice"}}</title>
+    <title>{{ title | default:"Print Invoice"}}</title>
     <style>
         @page  {
             size: A4;
@@ -293,11 +293,13 @@ table tfoot tr td:first-child {
                     <td colspan="2">SUBTOTAL</td>
                     <td>{{ final_summary.sub_total }}</td>
                   </tr>
+                  {% if final_summary.p_and_f != 0 %}
                   <tr>
                     <td colspan="2"></td>
                     <td colspan="2">P&F</td>
                     <td>{{ final_summary.p_and_f }}</td>
                   </tr>
+                  {% endif %}
                   {% if final_summary.last_balance != 0 %}
                   <tr>
                     <td colspan="2"></td>
@@ -336,7 +338,7 @@ table tfoot tr td:first-child {
       <br/>
       <div id="notices">
         <div class="notice">Notice:</div>
-        <div>Electronic items like CDI's once sold cannot be returned back.</div>
+        <div>Goods once sold cannot be returned back.</div>
       </div>
     </main>
   </body>
